@@ -1,0 +1,43 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# 本地配置（含 cookie / API Key，严禁提交）
+batch_config.json
+config.json
+.env
+
+# 下载产物与分析结果
+downloads/
+result/
+*.mp4
+*.webm
+*.mkv
+*.flv
+*.part
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# 日志与中间文件
+*.log
+*_download.log
+*.csv
+*.xlsx
+
+# 链接清单（可能含个人收藏内容）
+作品链接清单.md
+urls.txt
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store

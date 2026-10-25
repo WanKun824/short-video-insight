@@ -1,0 +1,12 @@
+# 运行时依赖
+# 下载环节仅需 httpx；分析环节按所选后端二选一安装
+httpx>=0.27.0
+
+# 内容分析：qwen 后端（阿里云百炼 DashScope）
+dashscope>=1.20.0
+
+# 汇总导出 Excel（缺失时自动跳过 .xlsx，仅生成 CSV）
+openpyxl>=3.1.0
+
+# 抖音 api 模式 / TikTok 需要配合 TikTokDownloader 仓库，
+# 届时请按该仓库的 requirements 安装（本项目默认通路无需这些依赖）
