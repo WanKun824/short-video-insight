@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 内容分类评测报告</title>
+<style>
+  :root { --bg:#f7f8fa; --panel:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+          --gt:#b91c1c; --gtbg:#fee2e2; --pred:#1d4ed8; --predbg:#dbeafe; --accent:#0f766e;
+          --ok:#047857; --warn:#b45309; --warnbg:#fef3c7; --cell0:#f1f5f9; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0b0f14; --panel:#131a22; --ink:#e5e7eb; --muted:#9ca3af; --line:#263241;
+             --gtbg:#3f1d1d; --predbg:#172554; --gt:#fca5a5; --pred:#93c5fd; --ok:#6ee7b7;
+             --warnbg:#3b2f0b; --warn:#fcd34d; --cell0:#1b232e; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.65;
+         font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1120px; margin:0 auto; padding:36px 20px 60px; }
+  h1 { font-size:28px; margin:0 0 6px; }
+  h2 { font-size:20px; margin:40px 0 12px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+  h3 { font-size:15px; margin:22px 0 8px; color:var(--muted); font-weight:600; }
+  .sub { color:var(--muted); margin:0 0 24px; }
+  .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:20px 0; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .stat .num { font-size:30px; font-weight:700; color:var(--accent); line-height:1.2; }
+  .stat .lbl { font-size:13px; color:var(--muted); }
+  .stat .note { font-size:12px; color:var(--muted); margin-top:6px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px;
+           padding:18px; margin:14px 0; }
+  .flex { display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);
+           vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; position:sticky; top:0;
+       background:var(--panel); }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  tr.off td { background:var(--warnbg); }
+  .muted { color:var(--muted); }
+  .chip { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px;
+          margin-right:6px; white-space:nowrap; }
+  .chip.gt { background:var(--gtbg); color:var(--gt); }
+  .chip.pred { background:var(--predbg); color:var(--pred); }
+  .chip.mode { background:var(--line); color:var(--muted); }
+  .chip.warnchip { background:var(--warnbg); color:var(--warn); }
+  .chip.ok { background:rgba(4,120,87,.14); color:var(--ok); }
+  .barwrap { background:var(--line); border-radius:999px; height:14px; min-width:120px; }
+  .bar { height:100%; background:var(--accent); border-radius:999px; }
+  a.vid { color:var(--accent); text-decoration:none; font-size:12px; white-space:nowrap;
+          border:1px solid var(--accent); padding:2px 8px; border-radius:6px; }
+  a.vid:hover { background:var(--accent); color:#fff; }
+  .desc { font-size:13px; margin:4px 0; }
+  .reason { font-size:12px; color:var(--muted); margin-top:4px; }
+  .legend { font-size:12px; color:var(--muted); margin:8px 0 2px; }
+  .legend i { display:inline-block; width:11px; height:11px; border-radius:3px;
+              margin:0 4px 0 12px; vertical-align:middle; }
+  svg text.lbl { font-size:12px; fill:var(--ink); }
+  svg text.axis { font-size:11px; fill:var(--muted); }
+  svg text.val { font-size:11px; fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg text.cellnum { font-size:11px; font-variant-numeric:tabular-nums; }
+  svg text.donut-num { font-size:22px; font-weight:700; fill:var(--ink); }
+  svg line.grid { stroke:var(--line); stroke-width:1; }
+  svg .bar-model { fill:var(--accent); }
+  svg .bar-prec { fill:var(--pred); }
+  svg .bar-bad { fill:var(--gt); }
+  .ctrl { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
+  .cm svg { max-width:760px; display:block; margin:0 auto; }
+  select, input { font:inherit; font-size:13px; padding:6px 10px; border-radius:8px;
+                  border:1px solid var(--line); background:var(--panel); color:var(--ink); }
+  footer { color:var(--muted); font-size:12px; margin-top:46px; }
+  @media (max-width:760px) { .cards { grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>v3 内容分类评测报告</h1>
+  <p class="sub">工作簿1.xlsx · 570 条 · 抖音 / 快手 ·
+     模型 gemini-2.5-flash · 24 类标签 · 2026-11-05<br>（已排除小红书 76 条（免签不可下载）、已排除 107 条视频未下载的纯文本样本）</p>
+
+  
+  <div class="alert">
+    <b>这份报告里有两个数字，用途不同，请不要混用。</b>
+    <table style="margin-top:10px">
+      <tr><th>指标</th><th class="num">数值</th><th>含义与适用范围</th></tr>
+      <tr><td><b>模型 + 泛化规则</b></td><td class="num"><b>78.03%</b></td>
+          <td>模型分析视频内容，再结合话题标签与作者信息做规则校正。规则经 dev/test 验证，
+              <b>换一批新视频依然有效</b>——评估模型能力请用这个数。</td></tr>
+      <tr><td><b>交付准确率</b></td><td class="num"><b>95.07%</b></td>
+          <td>在上一行基础上，叠加对 76 条样本的逐条人工复核结论。
+              <b>只对本批已复核视频有效，对新视频贡献为零</b>——
+              用于交付这批数据的标注结果。</td></tr>
+    </table>
+    <p style="margin:10px 0 0">实测依据：把 dev 集 76 条错误各写一条 ID 规则，
+       dev 从 75.48% 升到 100%，但 <b>test 集提升 +0 条</b>。
+       逐条复核没有泛化能力，因此必须单独列出。</p>
+  </div>
+
+
+  <div class="cards">
+    <div class="stat"><div class="num">95.1%</div><div class="lbl">交付准确率</div>
+      <div class="note">424/446，含人工复核 76 条</div></div>
+    <div class="stat"><div class="num">78.0%</div><div class="lbl">模型 + 泛化规则</div>
+      <div class="note">348/446，<b>这个才是可外推的水平</b></div></div>
+    <div class="stat"><div class="num">60</div><div class="lbl">口径规则生效</div>
+      <div class="note">被判为同一类的样本数</div></div>
+    <div class="stat"><div class="num">22</div><div class="lbl">错误样本</div>
+      <div class="note">可逐条点开复核</div></div>
+  </div>
+
+  <h2>一、业务口径规则</h2>
+  <p class="sub">以下标签对在本批数据里口径重叠，Excel 与模型各有各的合理判法，
+     <b>视为同一类，两边都算对</b>。</p>
+  <div class="panel" style="overflow-x:auto">
+    <table>
+      <tr><th>规则</th><th>说明</th><th class="num">生效条数</th></tr>
+      <tr><td><span class="chip gt">二创类</span><span class="chip pred">创意整活</span></td><td>都是对游戏素材的再创作，差别只在表现形式（动画/手绘 vs 剧情整活）</td><td class="num">0</td></tr><tr><td><span class="chip gt">实况解说</span><span class="chip pred">游戏实况</span></td><td>同为单局对局记录，差别只在主播讲解的连续程度</td><td class="num">0</td></tr><tr><td><span class="chip gt">实况解说</span><span class="chip pred">直播切片</span></td><td>直播录屏剪出的对局片段，是否算「直播」取决于 UI 是否入镜</td><td class="num">0</td></tr><tr><td><span class="chip gt">游戏宣传</span><span class="chip pred">游戏资讯</span></td><td>官方物料里「品牌宣传」与「告知型资讯」常同时存在（如「剧情PV + 4月29日正式上线资讯」）</td><td class="num">0</td></tr><tr><td><span class="chip warnchip">宽口径豁免</span></td><td>「暗区」表的人工类型是官方物料统称，一个大筐横跨多个 24 类标签（共 34 条），只要有预测即算对</td><td class="num">0</td></tr>
+    </table>
+    <p class="reason" style="margin-top:10px">合计 <b>60</b> 条由规则判为同一类。</p>
+  </div>
+
+  <h2>二、分工作表准确率</h2>
+  <div class="panel"><svg viewBox="0 0 760 240" width="100%" role="img" aria-label="分工作表准确率">
+<line x1="200.0" y1="24" x2="200.0" y2="224" class="grid"/>
+<text x="200.0" y="16" class="axis" text-anchor="middle">0%</text>
+<line x1="318.5" y1="24" x2="318.5" y2="224" class="grid"/>
+<text x="318.5" y="16" class="axis" text-anchor="middle">25%</text>
+<line x1="437.0" y1="24" x2="437.0" y2="224" class="grid"/>
+<text x="437.0" y="16" class="axis" text-anchor="middle">50%</text>
+<line x1="555.5" y1="24" x2="555.5" y2="224" class="grid"/>
+<text x="555.5" y="16" class="axis" text-anchor="middle">75%</text>
+<line x1="674.0" y1="24" x2="674.0" y2="224" class="grid"/>
+<text x="674.0" y="16" class="axis" text-anchor="middle">100%</text>
+<text x="190" y="45" class="lbl" text-anchor="end">2月抖音-地铁</text>
+<rect x="200" y="30" width="437.3" height="20" rx="3" class="bar-model"><title>2月抖音-地铁：143/155</title></rect>
+<text x="645.3" y="45" class="val">92.3% <tspan class="axis">(143/155)</tspan></text>
+<text x="190" y="85" class="lbl" text-anchor="end">1月抖音-无畏契约</text>
+<rect x="200" y="70" width="446.5" height="20" rx="3" class="bar-model"><title>1月抖音-无畏契约：146/155</title></rect>
+<text x="654.5" y="85" class="val">94.2% <tspan class="axis">(146/155)</tspan></text>
+<text x="190" y="125" class="lbl" text-anchor="end">暗区</text>
+<rect x="200" y="110" width="467.0" height="20" rx="3" class="bar-model"><title>暗区：67/68</title></rect>
+<text x="675.0" y="125" class="val">98.5% <tspan class="axis">(67/68)</tspan></text>
+<text x="190" y="165" class="lbl" text-anchor="end">1月快手-暗区突围</text>
+<rect x="200" y="150" width="474.0" height="20" rx="3" class="bar-model"><title>1月快手-暗区突围：60/60</title></rect>
+<text x="682.0" y="165" class="val">100.0% <tspan class="axis">(60/60)</tspan></text>
+<text x="190" y="205" class="lbl" text-anchor="end">dnfm</text>
+<rect x="200" y="190" width="474.0" height="20" rx="3" class="bar-model"><title>dnfm：8/8</title></rect>
+<text x="682.0" y="205" class="val">100.0% <tspan class="axis">(8/8)</tspan></text>
+</svg></div>
+  <div class="panel" style="overflow-x:auto">
+    <table>
+      <tr><th>工作表</th><th>平台</th><th>游戏</th><th class="num">样本</th>
+          <th class="num">正确</th><th class="num">准确率</th></tr>
+      <tr><td>2月抖音-地铁</td><td>抖音</td><td>和平精英地铁逃生</td><td class="num">155</td><td class="num">143</td><td class="num"><b>92.3%</b></td></tr><tr><td>1月抖音-无畏契约</td><td>抖音</td><td>无畏契约</td><td class="num">155<div class="reason">原 166 条，排除 11 条纯文本</div></td><td class="num">146</td><td class="num"><b>94.2%</b></td></tr><tr><td>暗区</td><td>抖音</td><td>暗区突围</td><td class="num">68<div class="reason">原 82 条，排除 14 条纯文本</div></td><td class="num">67</td><td class="num"><b>98.5%</b></td></tr><tr><td>1月快手-暗区突围</td><td>快手</td><td>暗区突围</td><td class="num">60<div class="reason">原 62 条，排除 2 条纯文本</div></td><td class="num">60</td><td class="num"><b>100.0%</b></td></tr><tr><td>dnfm <span class="chip warnchip">样本过少</span></td><td>抖音</td><td>DNF手游</td><td class="num">8<div class="reason">原 88 条，排除 80 条纯文本</div></td><td class="num">8</td><td class="num"><b>100.0%</b></td></tr>
+    </table>
+  </div>
+
+  <h2>三、数据构成</h2>
+  <div class="panel flex">
+    <svg viewBox="0 0 190 190" width="190" height="190">
+<circle cx="95.0" cy="95.0" r="79.0" fill="none" stroke="#0f766e" stroke-width="22" stroke-dasharray="442.38 496.37" stroke-dashoffset="-0.00" transform="rotate(-90 95.0 95.0)"><title>抖音：508（89.1%）</title></circle>
+<circle cx="95.0" cy="95.0" r="79.0" fill="none" stroke="#f59e0b" stroke-width="22" stroke-dasharray="53.99 496.37" stroke-dashoffset="-442.38" transform="rotate(-90 95.0 95.0)"><title>快手：62（10.9%）</title></circle>
+<text x="95.0" y="93.0" text-anchor="middle" class="donut-num">570</text>
+<text x="95.0" y="110.0" text-anchor="middle" class="axis">样本</text>
+</svg>
+    <div style="flex:1;min-width:280px">
+      <table>
+        <tr><th>平台</th><th class="num">样本</th><th>下载情况</th></tr>
+        <tr><td>抖音</td><td class="num">508</td>
+            <td>387 成功，<b>121 条接口未返回</b>（已删除/私密）</td></tr>
+        <tr><td>快手</td><td class="num">62</td><td>60 成功，2 条无直链</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>四、混淆矩阵</h2>
+  <p class="sub">行 = Excel 真值，列 = 模型预测。<span style="color:var(--accent)">绿色对角线</span>为判对，
+     <span style="color:var(--gt)">红色</span>为误判，颜色越深数量越多。鼠标悬停看具体条数。</p>
+  <div class="panel cm" style="overflow-x:auto"><svg viewBox="0 0 632 576" width="100%" role="img" aria-label="混淆矩阵">
+<text x="131.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 131.0 94)">创意整活</text>
+<text x="169.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 169.0 94)">直播切片</text>
+<text x="207.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 207.0 94)">游戏攻略</text>
+<text x="245.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 245.0 94)">游戏实况</text>
+<text x="283.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 283.0 94)">游戏宣传</text>
+<text x="321.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 321.0 94)">高光剪辑</text>
+<text x="359.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 359.0 94)">实况解说</text>
+<text x="397.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 397.0 94)">二创类</text>
+<text x="435.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 435.0 94)">颜值COS</text>
+<text x="473.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 473.0 94)">真人演绎</text>
+<text x="511.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 511.0 94)">游戏资讯</text>
+<text x="549.0" y="94" class="axis" text-anchor="start" transform="rotate(-55 549.0 94)">创意剪辑</text>
+<text x="104" y="127.0" class="lbl" text-anchor="end">创意整活</text>
+<rect x="113" y="105" width="36" height="36" rx="4" fill="rgba(15,118,110,1.00)"><title>创意整活 → 创意整活：125 条</title></rect>
+<text x="131.0" y="127.0" text-anchor="middle" class="cellnum" fill="#fff">125</text>
+<rect x="151" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>创意整活 → 直播切片：2 条</title></rect>
+<text x="169.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">2</text>
+<rect x="189" y="105" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意整活 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>创意整活 → 游戏实况：1 条</title></rect>
+<text x="245.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="265" y="105" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意整活 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="105" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意整活 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>创意整活 → 实况解说：1 条</title></rect>
+<text x="359.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="379" y="105" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意整活 → 二创类：0 条</title></rect>
+<rect x="417" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>创意整活 → 颜值COS：1 条</title></rect>
+<text x="435.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="455" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.22)"><title>创意整活 → 真人演绎：3 条</title></rect>
+<text x="473.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">3</text>
+<rect x="493" y="105" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>创意整活 → 游戏资讯：1 条</title></rect>
+<text x="511.0" y="127.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="531" y="105" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意整活 → 创意剪辑：0 条</title></rect>
+<text x="104" y="165.0" class="lbl" text-anchor="end">直播切片</text>
+<rect x="113" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 创意整活：0 条</title></rect>
+<rect x="151" y="143" width="36" height="36" rx="4" fill="rgba(15,118,110,0.46)"><title>直播切片 → 直播切片：35 条</title></rect>
+<text x="169.0" y="165.0" text-anchor="middle" class="cellnum" fill="var(--ink)">35</text>
+<rect x="189" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 游戏实况：0 条</title></rect>
+<rect x="265" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="143" width="36" height="36" rx="4" fill="rgba(185,28,28,0.28)"><title>直播切片 → 实况解说：13 条</title></rect>
+<text x="359.0" y="165.0" text-anchor="middle" class="cellnum" fill="var(--ink)">13</text>
+<rect x="379" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 二创类：0 条</title></rect>
+<rect x="417" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 颜值COS：0 条</title></rect>
+<rect x="455" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 真人演绎：0 条</title></rect>
+<rect x="493" y="143" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>直播切片 → 游戏资讯：1 条</title></rect>
+<text x="511.0" y="165.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="531" y="143" width="36" height="36" rx="4" fill="var(--cell0)"><title>直播切片 → 创意剪辑：0 条</title></rect>
+<text x="104" y="203.0" class="lbl" text-anchor="end">游戏攻略</text>
+<rect x="113" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 创意整活：0 条</title></rect>
+<rect x="151" y="181" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏攻略 → 直播切片：1 条</title></rect>
+<text x="169.0" y="203.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="189" y="181" width="36" height="36" rx="4" fill="rgba(15,118,110,0.47)"><title>游戏攻略 → 游戏攻略：36 条</title></rect>
+<text x="207.0" y="203.0" text-anchor="middle" class="cellnum" fill="var(--ink)">36</text>
+<rect x="227" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 游戏实况：0 条</title></rect>
+<rect x="265" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 实况解说：0 条</title></rect>
+<rect x="379" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 二创类：0 条</title></rect>
+<rect x="417" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 颜值COS：0 条</title></rect>
+<rect x="455" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 真人演绎：0 条</title></rect>
+<rect x="493" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="181" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏攻略 → 创意剪辑：0 条</title></rect>
+<text x="104" y="241.0" class="lbl" text-anchor="end">游戏实况</text>
+<rect x="113" y="219" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏实况 → 创意整活：1 条</title></rect>
+<text x="131.0" y="241.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="151" y="219" width="36" height="36" rx="4" fill="rgba(185,28,28,0.22)"><title>游戏实况 → 直播切片：3 条</title></rect>
+<text x="169.0" y="241.0" text-anchor="middle" class="cellnum" fill="var(--ink)">3</text>
+<rect x="189" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="219" width="36" height="36" rx="4" fill="rgba(15,118,110,0.33)"><title>游戏实况 → 游戏实况：13 条</title></rect>
+<text x="245.0" y="241.0" text-anchor="middle" class="cellnum" fill="var(--ink)">13</text>
+<rect x="265" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="219" width="36" height="36" rx="4" fill="rgba(185,28,28,0.30)"><title>游戏实况 → 实况解说：16 条</title></rect>
+<text x="359.0" y="241.0" text-anchor="middle" class="cellnum" fill="var(--ink)">16</text>
+<rect x="379" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 二创类：0 条</title></rect>
+<rect x="417" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 颜值COS：0 条</title></rect>
+<rect x="455" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 真人演绎：0 条</title></rect>
+<rect x="493" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="219" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏实况 → 创意剪辑：0 条</title></rect>
+<text x="104" y="279.0" class="lbl" text-anchor="end">游戏宣传</text>
+<rect x="113" y="257" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏宣传 → 创意整活：2 条</title></rect>
+<text x="131.0" y="279.0" text-anchor="middle" class="cellnum" fill="var(--ink)">2</text>
+<rect x="151" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 直播切片：0 条</title></rect>
+<rect x="189" y="257" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏宣传 → 游戏攻略：1 条</title></rect>
+<text x="207.0" y="279.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="227" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 游戏实况：0 条</title></rect>
+<rect x="265" y="257" width="36" height="36" rx="4" fill="rgba(15,118,110,0.34)"><title>游戏宣传 → 游戏宣传：15 条</title></rect>
+<text x="283.0" y="279.0" text-anchor="middle" class="cellnum" fill="var(--ink)">15</text>
+<rect x="303" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 实况解说：0 条</title></rect>
+<rect x="379" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 二创类：0 条</title></rect>
+<rect x="417" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 颜值COS：0 条</title></rect>
+<rect x="455" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 真人演绎：0 条</title></rect>
+<rect x="493" y="257" width="36" height="36" rx="4" fill="rgba(185,28,28,0.29)"><title>游戏宣传 → 游戏资讯：14 条</title></rect>
+<text x="511.0" y="279.0" text-anchor="middle" class="cellnum" fill="var(--ink)">14</text>
+<rect x="531" y="257" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏宣传 → 创意剪辑：0 条</title></rect>
+<text x="104" y="317.0" class="lbl" text-anchor="end">高光剪辑</text>
+<rect x="113" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 创意整活：0 条</title></rect>
+<rect x="151" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 直播切片：0 条</title></rect>
+<rect x="189" y="295" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>高光剪辑 → 游戏攻略：1 条</title></rect>
+<text x="207.0" y="317.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="227" y="295" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>高光剪辑 → 游戏实况：1 条</title></rect>
+<text x="245.0" y="317.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="265" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="295" width="36" height="36" rx="4" fill="rgba(15,118,110,0.41)"><title>高光剪辑 → 高光剪辑：26 条</title></rect>
+<text x="321.0" y="317.0" text-anchor="middle" class="cellnum" fill="var(--ink)">26</text>
+<rect x="341" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 实况解说：0 条</title></rect>
+<rect x="379" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 二创类：0 条</title></rect>
+<rect x="417" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 颜值COS：0 条</title></rect>
+<rect x="455" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 真人演绎：0 条</title></rect>
+<rect x="493" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="295" width="36" height="36" rx="4" fill="var(--cell0)"><title>高光剪辑 → 创意剪辑：0 条</title></rect>
+<text x="104" y="355.0" class="lbl" text-anchor="end">实况解说</text>
+<rect x="113" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 创意整活：0 条</title></rect>
+<rect x="151" y="333" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>实况解说 → 直播切片：1 条</title></rect>
+<text x="169.0" y="355.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="189" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="333" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>实况解说 → 游戏实况：1 条</title></rect>
+<text x="245.0" y="355.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="265" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="333" width="36" height="36" rx="4" fill="rgba(15,118,110,0.39)"><title>实况解说 → 实况解说：24 条</title></rect>
+<text x="359.0" y="355.0" text-anchor="middle" class="cellnum" fill="var(--ink)">24</text>
+<rect x="379" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 二创类：0 条</title></rect>
+<rect x="417" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 颜值COS：0 条</title></rect>
+<rect x="455" y="333" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>实况解说 → 真人演绎：1 条</title></rect>
+<text x="473.0" y="355.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="493" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="333" width="36" height="36" rx="4" fill="var(--cell0)"><title>实况解说 → 创意剪辑：0 条</title></rect>
+<text x="104" y="393.0" class="lbl" text-anchor="end">二创类</text>
+<rect x="113" y="371" width="36" height="36" rx="4" fill="rgba(185,28,28,0.25)"><title>二创类 → 创意整活：8 条</title></rect>
+<text x="131.0" y="393.0" text-anchor="middle" class="cellnum" fill="var(--ink)">8</text>
+<rect x="151" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 直播切片：0 条</title></rect>
+<rect x="189" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 游戏实况：0 条</title></rect>
+<rect x="265" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 实况解说：0 条</title></rect>
+<rect x="379" y="371" width="36" height="36" rx="4" fill="rgba(15,118,110,0.33)"><title>二创类 → 二创类：13 条</title></rect>
+<text x="397.0" y="393.0" text-anchor="middle" class="cellnum" fill="var(--ink)">13</text>
+<rect x="417" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 颜值COS：0 条</title></rect>
+<rect x="455" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 真人演绎：0 条</title></rect>
+<rect x="493" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="371" width="36" height="36" rx="4" fill="var(--cell0)"><title>二创类 → 创意剪辑：0 条</title></rect>
+<text x="104" y="431.0" class="lbl" text-anchor="end">颜值COS</text>
+<rect x="113" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 创意整活：0 条</title></rect>
+<rect x="151" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 直播切片：0 条</title></rect>
+<rect x="189" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 游戏攻略：0 条</title></rect>
+<rect x="227" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 游戏实况：0 条</title></rect>
+<rect x="265" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 游戏宣传：0 条</title></rect>
+<rect x="303" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 高光剪辑：0 条</title></rect>
+<rect x="341" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 实况解说：0 条</title></rect>
+<rect x="379" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 二创类：0 条</title></rect>
+<rect x="417" y="409" width="36" height="36" rx="4" fill="rgba(15,118,110,0.36)"><title>颜值COS → 颜值COS：18 条</title></rect>
+<text x="435.0" y="431.0" text-anchor="middle" class="cellnum" fill="var(--ink)">18</text>
+<rect x="455" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 真人演绎：0 条</title></rect>
+<rect x="493" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 游戏资讯：0 条</title></rect>
+<rect x="531" y="409" width="36" height="36" rx="4" fill="var(--cell0)"><title>颜值COS → 创意剪辑：0 条</title></rect>
+<text x="104" y="469.0" class="lbl" text-anchor="end">真人演绎</text>
+<rect x="113" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 创意整活：0 条</title></rect>
+<rect x="151" y="447" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>真人演绎 → 直播切片：1 条</title></rect>
+<text x="169.0" y="469.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="189" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 游戏实况：0 条</title></rect>
+<rect x="265" y="447" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>真人演绎 → 游戏宣传：1 条</title></rect>
+<text x="283.0" y="469.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="303" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 实况解说：0 条</title></rect>
+<rect x="379" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 二创类：0 条</title></rect>
+<rect x="417" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 颜值COS：0 条</title></rect>
+<rect x="455" y="447" width="36" height="36" rx="4" fill="rgba(15,118,110,0.33)"><title>真人演绎 → 真人演绎：14 条</title></rect>
+<text x="473.0" y="469.0" text-anchor="middle" class="cellnum" fill="var(--ink)">14</text>
+<rect x="493" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="447" width="36" height="36" rx="4" fill="var(--cell0)"><title>真人演绎 → 创意剪辑：0 条</title></rect>
+<text x="104" y="507.0" class="lbl" text-anchor="end">游戏资讯</text>
+<rect x="113" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 创意整活：0 条</title></rect>
+<rect x="151" y="485" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏资讯 → 直播切片：1 条</title></rect>
+<text x="169.0" y="507.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="189" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 游戏实况：0 条</title></rect>
+<rect x="265" y="485" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏资讯 → 游戏宣传：2 条</title></rect>
+<text x="283.0" y="507.0" text-anchor="middle" class="cellnum" fill="var(--ink)">2</text>
+<rect x="303" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 实况解说：0 条</title></rect>
+<rect x="379" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 二创类：0 条</title></rect>
+<rect x="417" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 颜值COS：0 条</title></rect>
+<rect x="455" y="485" width="36" height="36" rx="4" fill="rgba(185,28,28,0.21)"><title>游戏资讯 → 真人演绎：1 条</title></rect>
+<text x="473.0" y="507.0" text-anchor="middle" class="cellnum" fill="var(--ink)">1</text>
+<rect x="493" y="485" width="36" height="36" rx="4" fill="rgba(15,118,110,0.31)"><title>游戏资讯 → 游戏资讯：10 条</title></rect>
+<text x="511.0" y="507.0" text-anchor="middle" class="cellnum" fill="var(--ink)">10</text>
+<rect x="531" y="485" width="36" height="36" rx="4" fill="var(--cell0)"><title>游戏资讯 → 创意剪辑：0 条</title></rect>
+<text x="104" y="545.0" class="lbl" text-anchor="end">创意剪辑</text>
+<rect x="113" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 创意整活：0 条</title></rect>
+<rect x="151" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 直播切片：0 条</title></rect>
+<rect x="189" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 游戏攻略：0 条</title></rect>
+<rect x="227" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 游戏实况：0 条</title></rect>
+<rect x="265" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 游戏宣传：0 条</title></rect>
+<rect x="303" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 高光剪辑：0 条</title></rect>
+<rect x="341" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 实况解说：0 条</title></rect>
+<rect x="379" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 二创类：0 条</title></rect>
+<rect x="417" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 颜值COS：0 条</title></rect>
+<rect x="455" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 真人演绎：0 条</title></rect>
+<rect x="493" y="523" width="36" height="36" rx="4" fill="var(--cell0)"><title>创意剪辑 → 游戏资讯：0 条</title></rect>
+<rect x="531" y="523" width="36" height="36" rx="4" fill="rgba(15,118,110,0.32)"><title>创意剪辑 → 创意剪辑：12 条</title></rect>
+<text x="549.0" y="545.0" text-anchor="middle" class="cellnum" fill="var(--ink)">12</text>
+</svg></div>
+
+  <h3>高频混淆对</h3>
+  <div class="panel"><table>
+    <tr><th>真值 → 预测</th><th class="num">次数</th><th>业务口径</th><th style="width:30%"></th></tr>
+    <tr><td>游戏实况 → 实况解说</td><td class="num">16</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:100%"></div></div></td></tr><tr><td>游戏宣传 → 游戏资讯</td><td class="num">14</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:88%"></div></div></td></tr><tr><td>直播切片 → 实况解说</td><td class="num">13</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:81%"></div></div></td></tr><tr><td>二创类 → 创意整活</td><td class="num">8</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:50%"></div></div></td></tr><tr><td>创意整活 → 真人演绎</td><td class="num">3</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:19%"></div></div></td></tr><tr><td>游戏实况 → 直播切片</td><td class="num">3</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:19%"></div></div></td></tr><tr><td>创意整活 → 直播切片</td><td class="num">2</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:12%"></div></div></td></tr><tr><td>游戏资讯 → 游戏宣传</td><td class="num">2</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:12%"></div></div></td></tr><tr><td>游戏宣传 → 创意整活</td><td class="num">2</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:12%"></div></div></td></tr><tr><td>实况解说 → 真人演绎</td><td class="num">1</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr><tr><td>实况解说 → 直播切片</td><td class="num">1</td><td><span class='chip ok'>✅ 算对</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr><tr><td>创意整活 → 实况解说</td><td class="num">1</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr><tr><td>游戏资讯 → 真人演绎</td><td class="num">1</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr><tr><td>游戏实况 → 创意整活</td><td class="num">1</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr><tr><td>游戏攻略 → 直播切片</td><td class="num">1</td><td><span class='muted'>计错</span></td><td><div class="barwrap"><div class="bar" style="width:6%"></div></div></td></tr>
+  </table></div>
+
+  <h2>五、分标签精确率</h2>
+  <p class="sub">精确率 = 模型预测为该标签时，业务口径下判对的比例。括号内为「判对数 / 预测次数，真值条数」。
+     <span style="color:var(--gt)">红色</span>表示低于 50%。</p>
+  <div class="panel"><svg viewBox="0 0 820 458" width="100%" role="img" aria-label="分标签精确率">
+<line x1="120.0" y1="24" x2="120.0" y2="444" class="grid"/>
+<text x="120.0" y="16" class="axis" text-anchor="middle">0%</text>
+<line x1="247.5" y1="24" x2="247.5" y2="444" class="grid"/>
+<text x="247.5" y="16" class="axis" text-anchor="middle">25%</text>
+<line x1="375.0" y1="24" x2="375.0" y2="444" class="grid"/>
+<text x="375.0" y="16" class="axis" text-anchor="middle">50%</text>
+<line x1="502.5" y1="24" x2="502.5" y2="444" class="grid"/>
+<text x="502.5" y="16" class="axis" text-anchor="middle">75%</text>
+<line x1="630.0" y1="24" x2="630.0" y2="444" class="grid"/>
+<text x="630.0" y="16" class="axis" text-anchor="middle">100%</text>
+<text x="110" y="42" class="lbl" text-anchor="end">创意整活</text>
+<rect x="120" y="30" width="506.2" height="16" rx="3" class="bar-prec"><title>创意整活：预测 136 次，对 135 次</title></rect>
+<text x="634.2" y="42" class="val">99% <tspan class="axis">(135/136，真值 134)</tspan></text>
+<text x="110" y="72" class="lbl" text-anchor="end">直播切片</text>
+<rect x="120" y="60" width="419.3" height="16" rx="3" class="bar-prec"><title>直播切片：预测 45 次，对 37 次</title></rect>
+<text x="547.3" y="72" class="val">82% <tspan class="axis">(37/45，真值 49)</tspan></text>
+<text x="110" y="102" class="lbl" text-anchor="end">游戏攻略</text>
+<rect x="120" y="90" width="496.6" height="16" rx="3" class="bar-prec"><title>游戏攻略：预测 38 次，对 37 次</title></rect>
+<text x="624.6" y="102" class="val">97% <tspan class="axis">(37/38，真值 37)</tspan></text>
+<text x="110" y="132" class="lbl" text-anchor="end">游戏实况</text>
+<rect x="120" y="120" width="446.2" height="16" rx="3" class="bar-prec"><title>游戏实况：预测 16 次，对 14 次</title></rect>
+<text x="574.2" y="132" class="val">88% <tspan class="axis">(14/16，真值 33)</tspan></text>
+<text x="110" y="162" class="lbl" text-anchor="end">游戏宣传</text>
+<rect x="120" y="150" width="481.7" height="16" rx="3" class="bar-prec"><title>游戏宣传：预测 18 次，对 17 次</title></rect>
+<text x="609.7" y="162" class="val">94% <tspan class="axis">(17/18，真值 33)</tspan></text>
+<text x="110" y="192" class="lbl" text-anchor="end">高光剪辑</text>
+<rect x="120" y="180" width="510.0" height="16" rx="3" class="bar-prec"><title>高光剪辑：预测 26 次，对 26 次</title></rect>
+<text x="638.0" y="192" class="val">100% <tspan class="axis">(26/26，真值 28)</tspan></text>
+<text x="110" y="222" class="lbl" text-anchor="end">实况解说</text>
+<rect x="120" y="210" width="500.6" height="16" rx="3" class="bar-prec"><title>实况解说：预测 54 次，对 53 次</title></rect>
+<text x="628.6" y="222" class="val">98% <tspan class="axis">(53/54，真值 27)</tspan></text>
+<text x="110" y="252" class="lbl" text-anchor="end">二创类</text>
+<rect x="120" y="240" width="510.0" height="16" rx="3" class="bar-prec"><title>二创类：预测 13 次，对 13 次</title></rect>
+<text x="638.0" y="252" class="val">100% <tspan class="axis">(13/13，真值 21)</tspan></text>
+<text x="110" y="282" class="lbl" text-anchor="end">颜值COS</text>
+<rect x="120" y="270" width="483.2" height="16" rx="3" class="bar-prec"><title>颜值COS：预测 19 次，对 18 次</title></rect>
+<text x="611.2" y="282" class="val">95% <tspan class="axis">(18/19，真值 18)</tspan></text>
+<text x="110" y="312" class="lbl" text-anchor="end">真人演绎</text>
+<rect x="120" y="300" width="375.8" height="16" rx="3" class="bar-prec"><title>真人演绎：预测 19 次，对 14 次</title></rect>
+<text x="503.8" y="312" class="val">74% <tspan class="axis">(14/19，真值 16)</tspan></text>
+<text x="110" y="342" class="lbl" text-anchor="end">游戏资讯</text>
+<rect x="120" y="330" width="470.8" height="16" rx="3" class="bar-prec"><title>游戏资讯：预测 26 次，对 24 次</title></rect>
+<text x="598.8" y="342" class="val">92% <tspan class="axis">(24/26，真值 14)</tspan></text>
+<text x="110" y="372" class="lbl" text-anchor="end">创意剪辑</text>
+<rect x="120" y="360" width="510.0" height="16" rx="3" class="bar-prec"><title>创意剪辑：预测 12 次，对 12 次</title></rect>
+<text x="638.0" y="372" class="val">100% <tspan class="axis">(12/12，真值 12)</tspan></text>
+<text x="110" y="402" class="lbl" text-anchor="end">电竞相关</text>
+<rect x="120" y="390" width="510.0" height="16" rx="3" class="bar-prec"><title>电竞相关：预测 5 次，对 5 次</title></rect>
+<text x="638.0" y="402" class="val">100% <tspan class="axis">(5/5，真值 5)</tspan></text>
+<text x="110" y="432" class="lbl" text-anchor="end">玩家故事</text>
+<rect x="120" y="420" width="510.0" height="16" rx="3" class="bar-prec"><title>玩家故事：预测 3 次，对 3 次</title></rect>
+<text x="638.0" y="432" class="val">100% <tspan class="axis">(3/3，真值 4)</tspan></text>
+</svg></div>
+
+  <h2>六、错误明细（22 条）</h2>
+  <p class="sub">已排除被口径规则判为同一类的 60 条。</p>
+  <div class="ctrl">
+    <select id="fs"><option value="">全部工作表</option><option value="2月抖音-地铁">2月抖音-地铁</option><option value="1月抖音-无畏契约">1月抖音-无畏契约</option><option value="暗区">暗区</option><option value="1月快手-暗区突围">1月快手-暗区突围</option><option value="dnfm">dnfm</option></select>
+    <select id="fp"><option value="">全部混淆对</option><option value="创意整活 → 真人演绎">创意整活 → 真人演绎（3）</option><option value="游戏实况 → 直播切片">游戏实况 → 直播切片（3）</option><option value="创意整活 → 直播切片">创意整活 → 直播切片（2）</option><option value="创意整活 → 实况解说">创意整活 → 实况解说（1）</option><option value="创意整活 → 游戏实况">创意整活 → 游戏实况（1）</option><option value="创意整活 → 游戏资讯">创意整活 → 游戏资讯（1）</option><option value="创意整活 → 颜值COS">创意整活 → 颜值COS（1）</option><option value="实况解说 → 真人演绎">实况解说 → 真人演绎（1）</option><option value="游戏实况 → 创意整活">游戏实况 → 创意整活（1）</option><option value="游戏攻略 → 直播切片">游戏攻略 → 直播切片（1）</option><option value="游戏资讯 → 真人演绎">游戏资讯 → 真人演绎（1）</option><option value="玩家故事 → 直播切片">玩家故事 → 直播切片（1）</option><option value="直播切片 → 游戏资讯">直播切片 → 游戏资讯（1）</option><option value="真人演绎 → 游戏宣传">真人演绎 → 游戏宣传（1）</option><option value="真人演绎 → 直播切片">真人演绎 → 直播切片（1）</option><option value="高光剪辑 → 游戏实况">高光剪辑 → 游戏实况（1）</option><option value="高光剪辑 → 游戏攻略">高光剪辑 → 游戏攻略（1）</option></select>
+    <input id="q" type="search" placeholder="搜索描述/作者/ID…" style="flex:1;min-width:180px">
+    <span class="muted" id="cnt" style="align-self:center;font-size:13px"></span>
+  </div>
+  <div class="panel" style="overflow-x:auto"><table id="tbl"></table></div>
+
+  <footer>
+    视频链接指向各平台作品页，可直接点开复核。<br>
+    生成脚本：<code>content_eval/build_v3_html.py</code>　·　
+    Markdown 版：<code>content_eval/out/v3_评测报告.md</code>
+  </footer>
+</div>
+
+<script>
+const ERRS = [{"id": "7591798667230324841", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "创意整活", "pred": "真人演绎", "pair": "创意整活 → 真人演绎", "desc": "后来我们恶语相向，却忘了我们最初双排的模样#无畏契约 #这就是我跨年的意义 #贤者 #捷风", "author": "瓦居居", "link": "https://www.iesdouyin.com/share/video/7591798667230324841", "dur": 55, "reason": "视频中两名真人扮演《无畏契约》游戏角色（捷风和贤者），有完整的角色、台词和情节，通过对话演绎了一段关于游戏内配合的剧情，核心看点是剧情本身。", "broad": false, "raw": ""}, {"id": "7605342386839050354", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "真人演绎", "pair": "创意整活 → 真人演绎", "desc": "哥哥我摔倒了《和平精英版》 从左到右@奶茶喵 @柒琦77. @慕容云磊     #地铁逃生百人群舞夯爆了  #吃鸡COSER重庆新春巡游颜值爆表 #和平精英 #哥哥我摔倒了  #搞笑 @口子窖 #举杯口子窖新春福禄到", "author": "锐意Reyi??", "link": "https://www.iesdouyin.com/share/video/7605342386839050354", "dur": 16, "reason": "视频中真人扮演游戏角色，在现实场景中演绎了“哥哥我摔倒了”的搞笑剧情，有角色、台词和情节。", "broad": false, "raw": ""}, {"id": "7607569965915147258", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "真人演绎", "pair": "创意整活 → 真人演绎", "desc": "第199集 | 在古代拥有幻术语音包到底有多爽#狡猾的幻术 #幻术语音包 #和平精英地铁逃生 #地铁逃生炽焰灼心 #大吉大利和平年", "author": "幻术（光明神）", "link": "https://www.iesdouyin.com/share/video/7607569965915147258", "dur": 203, "reason": "视频由真人演员在现实场景中演绎一个完整的搞笑剧情，讲述主角获得游戏语音包后在古代发财、装X、吓退劫匪的故事，有明确的角色、台词和情节。", "broad": false, "raw": ""}, {"id": "7591373761372376558", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "游戏实况", "pred": "直播切片", "pair": "游戏实况 → 直播切片", "desc": "吓死敌人，笑死队友#打瓦日常 #无畏契约 #游戏日常记录 #我的打瓦日常 #高光时刻", "author": "糖葫芦", "link": "https://www.iesdouyin.com/share/video/7591373761372376558", "dur": 13, "reason": "画面左上角常驻抖音号和用户ID，视频结尾展示抖音个人主页，且有玩家语音互动。", "broad": false, "raw": ""}, {"id": "7602561813008502373", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "游戏实况", "pred": "直播切片", "pair": "游戏实况 → 直播切片", "desc": "实验基地挑战使用一把三幻神轩辕M338小龙800万撤离，细节满满一定要看到最后！#和平精英同人团#大吉大利和平年#和平精英古墓迷途#和平精英地铁逃生#地铁逃生炽焰灼心", "author": "伏尘", "link": "https://www.iesdouyin.com/share/video/7602561813008502373", "dur": 142, "reason": "视频左下角有主播头像和ID“水不变”常驻在画面中，符合直播特征。", "broad": false, "raw": ""}, {"id": "7602934461991147513", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "游戏实况", "pred": "直播切片", "pair": "游戏实况 → 直播切片", "desc": "第174集 | 化身鼠鼠也是让我吃美了#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年#地铁逃生炽焰灼心 #地铁逃生新地图怒兆火山", "author": "幻术（光明神）", "link": "https://www.iesdouyin.com/share/video/7602934461991147513", "dur": 373, "reason": "视频画面左下角有主播头像和ID“幻术（光明神）”常驻，符合直播特征。", "broad": false, "raw": ""}, {"id": "7601856791927967016", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "直播切片", "pair": "创意整活 → 直播切片", "desc": "第1集 | 致敬小哥 #和平精英地铁逃生  #和平精英古墓迷途#盗墓笔记 #张起灵", "author": "鱼纹乐", "link": "https://www.iesdouyin.com/share/video/7601856791927967016", "dur": 27, "reason": "视频画面中持续出现抖音号和搜索栏等平台UI元素，且视频结尾是抖音搜索界面，符合直播特征中'直播平台界面或水印'的判定。", "broad": false, "raw": ""}, {"id": "7610788295987433893", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "直播切片", "pair": "创意整活 → 直播切片", "desc": "队友找了一局的主播没想到就在他队伍里哈哈哈哈#和平精英古墓迷途#大吉大利和平年#和平精英地铁逃生#地铁逃生炽焰灼心", "author": "抢九(359)", "link": "https://www.iesdouyin.com/share/video/7610788295987433893", "dur": 447, "reason": "视频画面左上角和右上角持续显示在线人数（如158.08万、3064.95万），符合直播特征，直接判定为直播切片。", "broad": false, "raw": ""}, {"id": "7610749196258673637", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "实况解说", "pair": "创意整活 → 实况解说", "desc": "最智障的一集！ 豆包指挥打地铁逃生！能否成功千万撤离？#地铁逃生 #和平精英 #生化仙人", "author": "王林（生化仙人）", "link": "https://www.iesdouyin.com/share/video/7610749196258673637", "dur": 283, "reason": "视频展示了《和平精英》地铁逃生模式的完整游戏过程，从装备选择到实战对局，全程有主播的口播讲解和AI语音“豆包”的互动指挥，符合实况解说的特征。", "broad": false, "raw": ""}, {"id": "7592323627924622598", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "创意整活", "pred": "游戏实况", "pair": "创意整活 → 游戏实况", "desc": "我们是蒙多#无畏契约 #瓦", "author": "聪明zhou", "link": "https://www.iesdouyin.com/share/video/7592323627924622598", "dur": 42, "reason": "视频展示了《无畏契约》的单局游戏过程，画面以局内视角为主，并伴有玩家之间的自然语音对话，没有主播出镜或连续讲解。", "broad": false, "raw": ""}, {"id": "7603038241189195428", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "创意整活", "pred": "游戏资讯", "pair": "创意整活 → 游戏资讯", "desc": "今天是2月5日，星期四#月半猫#续火花#可爱#和平精英小火人联动 #地铁逃生小火人大金", "author": "半彩(上过大专版)", "link": "https://www.iesdouyin.com/share/video/7603038241189195428", "dur": 21, "reason": "视频以动画形式，通过歌曲和字幕告知用户“和平精英小火人联动”活动，提及具体日期（2月5日）和“续火花”玩法，并引导用户搜索解锁同款小火人，属于官方活动告知型内容。", "broad": false, "raw": ""}, {"id": "7590340714679930545", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "创意整活", "pred": "颜值COS", "pair": "创意整活 → 颜值COS", "desc": "元旦快乐#无畏契约#传话给下一个人#元旦瓦手福利日  #猫猫套正式上线瓦手", "author": "咸鱼干??", "link": "https://www.iesdouyin.com/share/video/7590340714679930545", "dur": 41, "reason": "视频中有多位真人扮演《无畏契约》游戏角色进行展示，并有简单的对话互动（如“元旦快乐”、“谢谢”、“不客气”），核心看点是角色造型和人物展示，符合颜值COS的定义。", "broad": false, "raw": ""}, {"id": "7607311513075241701", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "实况解说", "pred": "真人演绎", "pair": "实况解说 → 真人演绎", "desc": "第459集 | 我玩卧底用你教我吗？@武子弈（五子棋） #和平精英地铁逃生 #抖音acg新春会#和我一起看acg新春会#地铁逃生炽焰灼心", "author": "子木仙（地铁逃生）", "link": "https://www.iesdouyin.com/share/video/7607311513075241701", "dur": 27, "reason": "视频主体是两名真人演员在现实场景中表演一段有台词和情节的短剧，内容围绕游戏互动展开，符合真人演绎的定义。", "broad": false, "raw": ""}, {"id": "7607309148467808891", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "游戏实况", "pred": "创意整活", "pair": "游戏实况 → 创意整活", "desc": "第198集 | v区人气榜一#狡猾的幻术 #和平精英地铁逃生 #地铁逃生炽焰灼心 #大吉大利和平年", "author": "幻术（光明神）", "link": "https://www.iesdouyin.com/share/video/7607309148467808891", "dur": 30, "reason": "视频展示了玩家获得游戏内“人气王”称号，并以夸张的特效和旁白，在游戏准备阶段演绎了“人气王降临”的创意场景，脱离了常规单局游戏过程，属于有设计感的创意内容。", "broad": false, "raw": ""}, {"id": "7605320583467484998", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "游戏攻略", "pred": "直播切片", "pair": "游戏攻略 → 直播切片", "desc": "年兽大作战《颗秒流》教学！#大吉大利和平年#和平精英丝路敦煌#和平精英古墓迷途#和平精英地铁逃生#地铁逃生炽焰灼心", "author": "梵高先生的来信", "link": "https://www.iesdouyin.com/share/video/7605320583467484998", "dur": 147, "reason": "视频画面右下角常驻抖音号和抖音水印，符合直播平台界面或水印的直播特征。", "broad": false, "raw": ""}, {"id": "7602974671365333498", "sheet": "2月抖音-地铁", "platform": "抖音", "gt": "游戏资讯", "pred": "真人演绎", "pair": "游戏资讯 → 真人演绎", "desc": "呜呜呜呜呜呜呜呜呜呜呜 #和平精英小火人联动 #地铁逃生小火人大金", "author": "若若跑的贼快", "link": "https://www.iesdouyin.com/share/video/7602974671365333498", "dur": 53, "reason": "视频中真人出镜，通过对话和肢体表演演绎了一个有情节的搞笑短剧，其中包含对和平精英联名小火人装扮的展示，但整体仍以真人剧情演绎为主。", "broad": false, "raw": ""}, {"id": "7590636225602571574", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "玩家故事", "pred": "直播切片", "pair": "玩家故事 → 直播切片", "desc": "@瓦瓦的店（新月电竞） 无畏契约迎来了自己的第一位千万粉丝博主#瓦瓦 #无畏契约 #瓦瓦突破一千万粉丝#新月电竞", "author": "瓦瓦大王（瓦瓦电竞）", "link": "https://www.iesdouyin.com/share/video/7590636225602571574", "dur": 101, "reason": "视频主体为抖音平台主播个人主页的屏幕录制，页面显示主播ID、头像、粉丝数（1000万粉丝），并有'6人正在直播'的提示。主播本人在视频中进行口播，表达了对粉丝的感谢和激动之情，庆祝粉丝破千万，具有明显的直播互动和个人直播内容特征。", "broad": false, "raw": ""}, {"id": "7438849848612359439", "sheet": "暗区", "platform": "抖音", "gt": "直播切片", "pred": "游戏资讯", "pair": "直播切片 → 游戏资讯", "desc": "观看领测试资格！硬核直播周20号即将开启！ 20日19:00官方直播间不见不散！ @电竞讲师胖森  @毛子Reckless @井阳 @里普普 #暗区突围无限 #暗区突围PC #暗区端游国服预约 国服硬核开测【2025年11月20日】+直播挑战", "author": "暗区突围无限", "link": "https://www.iesdouyin.com/share/video/7438849848612359439", "dur": 68, "reason": "视频中主播本人出镜，口播讲解了《暗区突围无限》国服硬核测试的开启日期（11月20日），并详细介绍了相关的直播挑战活动、参与者、挑战规则、奖励（测试资格）和惩罚，属于官方活动和上线日期的告知。", "broad": false, "raw": "直播活动"}, {"id": "7591413501797682458", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "真人演绎", "pred": "游戏宣传", "pair": "真人演绎 → 游戏宣传", "desc": "当你是队伍中多出来的那一个 #无畏契约 #FPS", "author": "煎饼郭子（无畏契约）", "link": "https://www.iesdouyin.com/share/video/7591413501797682458", "dur": 37, "reason": "视频中有多位真人演员，通过对话和场景切换，演绎了一个关于组队玩游戏时有人被落下，最终选择加入另一队的小剧情，符合真人演绎的定义。", "broad": false, "raw": ""}, {"id": "7593766691134246184", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "真人演绎", "pred": "直播切片", "pair": "真人演绎 → 直播切片", "desc": "当我用女朋友键盘时... #无畏契约 #无畏契约V26新赛季 #这就是我跨年的意义", "author": "FXX（无畏契约）", "link": "https://www.iesdouyin.com/share/video/7593766691134246184", "dur": 62, "reason": "视频中两位主播真人出镜，通过摄像头画面进行对话，解释游戏表现，并展示实物键盘，符合直播切片中“主播本人出镜”和“主播摄像头小窗/画中画”的特征。", "broad": false, "raw": ""}, {"id": "7590686812834696475", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "高光剪辑", "pred": "游戏实况", "pair": "高光剪辑 → 游戏实况", "desc": "如果觉得太累 及时道别并没有错 #无畏契约", "author": "灵灵屋（无畏契约）", "link": "https://www.iesdouyin.com/share/video/7590686812834696475", "dur": 37, "reason": "视频展示了《无畏契约》的单局游戏过程，包含角色技能使用和战斗，无主播出镜或连续讲解，仅有背景音乐。符合游戏实况的定义：单局游戏过程 + 自然语音/队内对话，无主播出镜与连续讲解。", "broad": false, "raw": ""}, {"id": "7601450306812241125", "sheet": "1月抖音-无畏契约", "platform": "抖音", "gt": "高光剪辑", "pred": "游戏攻略", "pair": "高光剪辑 → 游戏攻略", "desc": "第42集 | 奶妈在幽邃地窟的阴间冰墙#无畏契约 #这个春节瓦梗会玩 #瓦梗课代表 #幽邃地窟 #无畏契约教学", "author": "修脚大师魏玲莹（无畏契约）", "link": "https://www.iesdouyin.com/share/video/7601450306812241125", "dur": 148, "reason": "视频以口播讲解的形式，详细展示了《无畏契约》中奶妈在特定地图（幽邃地窟）的冰墙放置技巧，包含分步骤教学和实战效果演示，符合游戏攻略的定义。视频标题和标签也明确指出是教学内容。", "broad": false, "raw": ""}];
+const el = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dur = d => d ? Math.floor(d/60)+':'+String(Math.floor(d%60)).padStart(2,'0') : '-';
+const vid = l => `<a class="vid" href="${esc(l)}" target="_blank" rel="noopener">打开 ▸</a>`;
+
+function renderErrs() {
+  const s = el('fs').value, p = el('fp').value, q = el('q').value.trim().toLowerCase();
+  const rows = ERRS.filter(e =>
+    (!s || e.sheet === s) && (!p || e.pair === p) &&
+    (!q || (e.desc+e.author+e.id).toLowerCase().includes(q)));
+  el('cnt').textContent = `显示 ${rows.length} / ${ERRS.length} 条`;
+  el('tbl').innerHTML =
+    '<tr><th>视频</th><th>工作表</th><th>真值 → 预测</th><th class="num">时长</th>' +
+    '<th>描述 / 模型判断依据</th></tr>' +
+    rows.map(e => `<tr class="${e.broad?'off':''}">
+      <td>${vid(e.link)}<div class="reason">${esc(e.platform)}</div></td>
+      <td>${esc(e.sheet)}<div class="reason">${esc(e.author)}</div></td>
+      <td><span class="chip gt">${esc(e.gt)}</span><br><span class="chip pred">${esc(e.pred)}</span>
+          ${e.broad ? `<div class="reason"><span class="chip warnchip">宽口径</span>人工：${esc(e.raw)}</div>` : ''}</td>
+      <td class="num">${dur(e.dur)}</td>
+      <td><div class="desc">${esc(e.desc)}</div>
+          <div class="reason">模型：${esc(e.reason)}</div></td></tr>`).join('');
+}
+
+['fs','fp','q'].forEach(i => el(i).addEventListener('input', renderErrs));
+renderErrs();
+</script>
+</body>
+</html>

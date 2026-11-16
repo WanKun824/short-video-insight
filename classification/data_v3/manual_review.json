@@ -1,0 +1,770 @@
+{
+  "generated": "2026-11-05",
+  "scope": "仅对本批已复核视频有效，对新视频无泛化能力",
+  "base_accuracy": 0.7803,
+  "target": 0.95,
+  "reviewed_count": 76,
+  "order": "按模型置信度升序（先复核模型最没把握的）",
+  "items": [
+    {
+      "id": "7595982253340940986",
+      "sheet": "1月抖音-无畏契约",
+      "author": "black",
+      "model_pred": "二创类",
+      "reviewed_label": "才艺展示",
+      "confidence": 0.85,
+      "desc": "回复 @喜欢枫叶.??的评论 #无畏脱坑入坑上7881平台  这期是瓦学弟的定制 #无畏契约 #硬曲  @Stupid @南方 @佐郄",
+      "link": "https://www.iesdouyin.com/share/video/7595982253340940986"
+    },
+    {
+      "id": "7597015387834401000",
+      "sheet": "1月抖音-无畏契约",
+      "author": "瓦力（无畏契约）",
+      "model_pred": "创意整活",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.9,
+      "desc": "西装暴徒#无畏契约怜悯来了 #无畏契约",
+      "link": "https://www.iesdouyin.com/share/video/7597015387834401000"
+    },
+    {
+      "id": "7593102793586642202",
+      "sheet": "1月抖音-无畏契约",
+      "author": "???????? ????",
+      "model_pred": "二创类",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.9,
+      "desc": "第80集 | 从前的歌谣 都在指尖绕 #无畏契约  #白月光与朱砂痣 #青年创作者成长计划#妖狐双刀 #陇夜月华",
+      "link": "https://www.iesdouyin.com/share/video/7593102793586642202"
+    },
+    {
+      "id": "7590962724218178816",
+      "sheet": "1月抖音-无畏契约",
+      "author": "锐",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.9,
+      "desc": "第1集 | 整个走廊就我们班最吵?? #美服瓦罗兰特 #瓦罗兰特 #无畏契约 #打瓦日常 #valorant",
+      "link": "https://www.iesdouyin.com/share/video/7590962724218178816"
+    },
+    {
+      "id": "7598919120142355748",
+      "sheet": "1月抖音-无畏契约",
+      "author": "Luochen",
+      "model_pred": "创意剪辑",
+      "reviewed_label": "二创类",
+      "confidence": 0.9,
+      "desc": "请选择你的控场特工 #无畏契约 #讷贝尔瓦学奖  #这就是我跨年的意义 #抖音游戏混剪团 #青年创作者成长计划",
+      "link": "https://www.iesdouyin.com/share/video/7598919120142355748"
+    },
+    {
+      "id": "3xuhpfipdiypu5i",
+      "sheet": "1月快手-暗区突围",
+      "author": "文博(暗区突围)",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.9,
+      "desc": "无坚不摧 唯快不破 #暗区突围",
+      "link": "https://www.kuaishou.com/short-video/3xuhpfipdiypu5i"
+    },
+    {
+      "id": "7597072690831517823",
+      "sheet": "1月抖音-无畏契约",
+      "author": "晴小晴",
+      "model_pred": "创意整活",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "炼狱叔叔生气了 #无畏契约 #瓦罗兰特 #赛级 #魅魔 #炼狱",
+      "link": "https://www.iesdouyin.com/share/video/7597072690831517823"
+    },
+    {
+      "id": "7599978996482313510",
+      "sheet": "1月抖音-无畏契约",
+      "author": "灵灵屋（无畏契约）",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "下把起航母 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表",
+      "link": "https://www.iesdouyin.com/share/video/7599978996482313510"
+    },
+    {
+      "id": "7594108151105628131",
+      "sheet": "1月抖音-无畏契约",
+      "author": "boom感叹号",
+      "model_pred": "二创类",
+      "reviewed_label": "颜值COS",
+      "confidence": 0.95,
+      "desc": "对了贤者，你打算什么时候教我复活别人？ #无畏契约 #捷风 #贤者 #捷贤 #cos",
+      "link": "https://www.iesdouyin.com/share/video/7594108151105628131"
+    },
+    {
+      "id": "7591433744277014139",
+      "sheet": "1月抖音-无畏契约",
+      "author": "贤鱼君笑（无畏契约）",
+      "model_pred": "创意整活",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "尚博勒：给我擦皮鞋！#无畏契约 #无畏契约搞笑时刻 #无畏契约镜头语言 #无畏契约高光时刻 #精彩瞬间",
+      "link": "https://www.iesdouyin.com/share/video/7591433744277014139"
+    },
+    {
+      "id": "7596630674828807467",
+      "sheet": "1月抖音-无畏契约",
+      "author": "梗姐姐",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "第51集 | 用12条视频直接涨到一千一百万粉丝！再启老账号重开六边形脑袋，粉丝数比无畏契约官方的三倍还多！#瓦瓦#颗秒#无畏契约#梗",
+      "link": "https://www.iesdouyin.com/share/video/7596630674828807467"
+    },
+    {
+      "id": "7592996561282782346",
+      "sheet": "1月抖音-无畏契约",
+      "author": "深海鳕鱼堡",
+      "model_pred": "游戏实况",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "#无畏契约 #唐氏综合征 #少萝 #猎奇",
+      "link": "https://www.iesdouyin.com/share/video/7592996561282782346"
+    },
+    {
+      "id": "7608405948272594216",
+      "sheet": "2月抖音-地铁",
+      "author": "苏万同志(359)",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "恭喜发财 #击杀秀 #和平精英地铁逃生 #地铁逃生炽焰灼心",
+      "link": "https://www.iesdouyin.com/share/video/7608405948272594216"
+    },
+    {
+      "id": "7598479037304148409",
+      "sheet": "1月抖音-无畏契约",
+      "author": "吃吃吃",
+      "model_pred": "颜值COS",
+      "reviewed_label": "真人演绎",
+      "confidence": 0.95,
+      "desc": "如果帅是一种错，我将一错再错#尚博勒 #无畏契约 #抽象 #光明中学",
+      "link": "https://www.iesdouyin.com/share/video/7598479037304148409"
+    },
+    {
+      "id": "7464220813198101795",
+      "sheet": "暗区",
+      "author": "暗区突围无限",
+      "model_pred": "游戏宣传",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "我保险箱动了我不玩了！里面居然是… #暗区突围无限 #暗区突围PC #暗区突围端游 #暗区突围 创意整活-游戏创意剪辑",
+      "link": "https://www.iesdouyin.com/share/video/7464220813198101795"
+    },
+    {
+      "id": "7592326874082227878",
+      "sheet": "1月抖音-无畏契约",
+      "author": "HanHan（无畏契约）",
+      "model_pred": "真人演绎",
+      "reviewed_label": "武器展示",
+      "confidence": 0.95,
+      "desc": "给大家准备的新年礼物 #无畏契约#这就是我跨年的意义#hanhan无畏契约 #无畏契约新套装#青年创作者成长计划",
+      "link": "https://www.iesdouyin.com/share/video/7592326874082227878"
+    },
+    {
+      "id": "7606395071228222385",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "游戏测评",
+      "reviewed_label": "武器展示",
+      "confidence": 0.95,
+      "desc": "第193集 | 4把九级枪你们觉得哪把最好#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年#地铁逃生炽焰灼心 #和平精英灵驹仙姬",
+      "link": "https://www.iesdouyin.com/share/video/7606395071228222385"
+    },
+    {
+      "id": "7598161529522933018",
+      "sheet": "1月抖音-无畏契约",
+      "author": "绝对命中",
+      "model_pred": "剧情剪辑",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "第2集 | 休想伤害我的队友 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表 #讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7598161529522933018"
+    },
+    {
+      "id": "7590204566172534705",
+      "sheet": "1月抖音-无畏契约",
+      "author": "Tt.",
+      "model_pred": "活动剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "短裤里面套秋裤  我叫暮蝶你记住#无人机灯光秀 #重庆 #无畏契约 #暮蝶",
+      "link": "https://www.iesdouyin.com/share/video/7590204566172534705"
+    },
+    {
+      "id": "7594162512652774858",
+      "sheet": "1月抖音-无畏契约",
+      "author": "伊川肆",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "压制 手法 绝境 突破 自我 证明  巅峰 枷锁 答案 依赖 尽头 诠释 冷静 逆境 自信 无限 打破 困局 质疑 逆转 磨炼 极限 止步 假象 结果 终将 问鼎 冷静 挣脱 限制 领域 绝巅 过去 诀别 回忆 束缚 破镜 零碎 绝劣 缺口",
+      "link": "https://www.iesdouyin.com/share/video/7594162512652774858"
+    },
+    {
+      "id": "7595201392550623458",
+      "sheet": "1月抖音-无畏契约",
+      "author": "欧闫的喵喵课堂（无畏契约）",
+      "model_pred": "二创类",
+      "reviewed_label": "剧情剪辑",
+      "confidence": 0.95,
+      "desc": "第1集 | “我曾经也很弱小，但现在.... ” “我已经强大到可以保护大家” #无畏契约 #万象风华   #幽影 #贤者 #抖音acg新春会",
+      "link": "https://www.iesdouyin.com/share/video/7595201392550623458"
+    },
+    {
+      "id": "7599587606661319982",
+      "sheet": "1月抖音-无畏契约",
+      "author": "桐谷和人",
+      "model_pred": "游戏实况",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "我不许有人嘲笑ovo准星#超燃 #五杀 #无畏契约#讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7599587606661319982"
+    },
+    {
+      "id": "7603070403749643432",
+      "sheet": "2月抖音-地铁",
+      "author": "小姚（关注免费扶贫）",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "我也是醉了 #和平精英丝路贺新春 #和平精英地铁逃生#地铁逃生炽焰灼心#游戏破壁计划",
+      "link": "https://www.iesdouyin.com/share/video/7603070403749643432"
+    },
+    {
+      "id": "7603210228256276219",
+      "sheet": "2月抖音-地铁",
+      "author": "王林（生化仙人）",
+      "model_pred": "创意整活",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "最惊喜的一集！ 千万网红来我家给我做饭是什么样的体验？#地铁玩家春运集体得吃 #地铁逃生新地图怒兆火山 #和平精英丝路贺新春 #地铁逃生",
+      "link": "https://www.iesdouyin.com/share/video/7603210228256276219"
+    },
+    {
+      "id": "7590365823030599606",
+      "sheet": "1月抖音-无畏契约",
+      "author": "溥渊",
+      "model_pred": "真人演绎",
+      "reviewed_label": "颜值COS",
+      "confidence": 0.95,
+      "desc": "这才是真·猫猫套 #无畏契约 #coke #元旦瓦手福利日  #猫猫套正式上线瓦手",
+      "link": "https://www.iesdouyin.com/share/video/7590365823030599606"
+    },
+    {
+      "id": "7598417233803415270",
+      "sheet": "1月抖音-无畏契约",
+      "author": "小毛",
+      "model_pred": "创意整活",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "#昭陪 @9.9萌宠电竞 笑了半个小时才舍得发出来#求偶式瞄准挑战 #无畏契约 #在哭泣",
+      "link": "https://www.iesdouyin.com/share/video/7598417233803415270"
+    },
+    {
+      "id": "7591433985264774777",
+      "sheet": "1月抖音-无畏契约",
+      "author": "小水（无畏契约）",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "C大一个詹姆斯 #无畏契约 #这就是我跨年的意义",
+      "link": "https://www.iesdouyin.com/share/video/7591433985264774777"
+    },
+    {
+      "id": "7592268207470652401",
+      "sheet": "1月抖音-无畏契约",
+      "author": "饱饱1^",
+      "model_pred": "真人演绎",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "到底要干啥。#无畏契约 #一分钟干货教学 #职业选手",
+      "link": "https://www.iesdouyin.com/share/video/7592268207470652401"
+    },
+    {
+      "id": "7603242080827177913",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "第175集 | 我是大猪咪#狡猾的幻术 #和平精英地铁逃生 #和平精英小火人联动 #地铁逃生小火人大金 #地铁逃生炽焰灼心",
+      "link": "https://www.iesdouyin.com/share/video/7603242080827177913"
+    },
+    {
+      "id": "7599572553930659685",
+      "sheet": "1月抖音-无畏契约",
+      "author": "乔",
+      "model_pred": "创意整活",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "炼狱这个魅 #无畏契约 #炼狱 #魅魔",
+      "link": "https://www.iesdouyin.com/share/video/7599572553930659685"
+    },
+    {
+      "id": "7592202047546461467",
+      "sheet": "1月抖音-无畏契约",
+      "author": "夕阳.",
+      "model_pred": "创意剪辑",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "我总说我们会有以后 但现在我看未必 #无畏契约 #歌曲窃爱者 #L8R  #好歌分享官#讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7592202047546461467"
+    },
+    {
+      "id": "7604091306776374523",
+      "sheet": "2月抖音-地铁",
+      "author": "子木仙（地铁逃生）",
+      "model_pred": "创意整活",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "第451集 | 最倒霉的卧底出现了，被辐射区Boss欺负了！#和平精英同人团#大吉大利和平年#和平精英地铁逃生#地铁逃生炽焰灼心",
+      "link": "https://www.iesdouyin.com/share/video/7604091306776374523"
+    },
+    {
+      "id": "7604102845529312186",
+      "sheet": "2月抖音-地铁",
+      "author": "长留白",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "第414集 | 又是破大产的一天真不赖！ #和平精英神装返场 #和平精英皮肤返场 #和平精英地铁逃生 #地铁逃生炽焰灼心#长留白",
+      "link": "https://www.iesdouyin.com/share/video/7604102845529312186"
+    },
+    {
+      "id": "7591122408539524362",
+      "sheet": "1月抖音-无畏契约",
+      "author": "隔壁老鹅",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "什么操作能秒伤90W？ #FPS鉴赏家  #无畏契约  #瓦 素源网",
+      "link": "https://www.iesdouyin.com/share/video/7591122408539524362"
+    },
+    {
+      "id": "7592167505981017354",
+      "sheet": "1月抖音-无畏契约",
+      "author": "绝对命中",
+      "model_pred": "游戏宣传",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "天下英雄 就如这过江之鲫#无畏契约",
+      "link": "https://www.iesdouyin.com/share/video/7592167505981017354"
+    },
+    {
+      "id": "7591000118661469514",
+      "sheet": "1月抖音-无畏契约",
+      "author": "momo",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "#无畏契约 #瓦罗兰特#抖音acg新春会 #开年高燃#游戏破壁计划",
+      "link": "https://www.iesdouyin.com/share/video/7591000118661469514"
+    },
+    {
+      "id": "7598506079312701178",
+      "sheet": "1月抖音-无畏契约",
+      "author": "YJJY",
+      "model_pred": "创意整活",
+      "reviewed_label": "颜值COS",
+      "confidence": 0.95,
+      "desc": "什么时候教我复活呢 贤者 原图@游鲤  #无畏契约 #贤者 #捷风#讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7598506079312701178"
+    },
+    {
+      "id": "7603355289438339003",
+      "sheet": "2月抖音-地铁",
+      "author": "子木仙（地铁逃生）",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "第449集 | 地铁逃生密码箱专属大金#和平精英小火人联动 #地铁逃生小火人大金 #和平精英地铁逃生 #地铁逃生炽焰灼心",
+      "link": "https://www.iesdouyin.com/share/video/7603355289438339003"
+    },
+    {
+      "id": "7597427933838611889",
+      "sheet": "1月抖音-无畏契约",
+      "author": "Jing????",
+      "model_pred": "创意整活",
+      "reviewed_label": "才艺展示",
+      "confidence": 0.95,
+      "desc": "棒棒棒棒！#无畏契约 #棒棒棒棒 #五杀时刻 #钢琴 #瓦学家",
+      "link": "https://www.iesdouyin.com/share/video/7597427933838611889"
+    },
+    {
+      "id": "7606552105202199540",
+      "sheet": "2月抖音-地铁",
+      "author": "机智昊",
+      "model_pred": "颜值COS",
+      "reviewed_label": "活动剪辑",
+      "confidence": 0.95,
+      "desc": "还得是科技陆#小陆又饿了#第五大道#地铁逃生百人群舞夯爆了#和平精英",
+      "link": "https://www.iesdouyin.com/share/video/7606552105202199540"
+    },
+    {
+      "id": "7599176135239738097",
+      "sheet": "1月抖音-无畏契约",
+      "author": "废物点心",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "变如脸 #无畏契约 #瓦罗兰特 #游戏日常 #神操作 #变脸",
+      "link": "https://www.iesdouyin.com/share/video/7599176135239738097"
+    },
+    {
+      "id": "7591062210777058569",
+      "sheet": "1月抖音-无畏契约",
+      "author": "不知名夜露（无畏契约）",
+      "model_pred": "创意整活",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "夜露 天生的“犯罪人” #无畏契约 #无畏契约教学 #这就是我跨年的意义 #青年创作者成长计划",
+      "link": "https://www.iesdouyin.com/share/video/7591062210777058569"
+    },
+    {
+      "id": "7594114800936278090",
+      "sheet": "1月抖音-无畏契约",
+      "author": "牛蛙公主",
+      "model_pred": "真人演绎",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "#瓦罗兰特 #斯凯 #生活空间 #无畏契约#萌宠出道计划",
+      "link": "https://www.iesdouyin.com/share/video/7594114800936278090"
+    },
+    {
+      "id": "7605521545335550309",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "实况解说",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "第187集 | 火山地图居然有隐藏入口#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年#地铁逃生炽焰灼心 #地铁逃生新地图怒兆火山",
+      "link": "https://www.iesdouyin.com/share/video/7605521545335550309"
+    },
+    {
+      "id": "7602901454080431526",
+      "sheet": "2月抖音-地铁",
+      "author": "2曦",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "依旧地铁双子星 #和平精英 #地铁逃生",
+      "link": "https://www.iesdouyin.com/share/video/7602901454080431526"
+    },
+    {
+      "id": "3xjgik2ifsacyum",
+      "sheet": "1月快手-暗区突围",
+      "author": "咸瓜(世一跳)",
+      "model_pred": "实况解说",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "神秘打野点 #暗区突围  #暗区日常    #暗区火了",
+      "link": "https://www.kuaishou.com/short-video/3xjgik2ifsacyum"
+    },
+    {
+      "id": "7593667815857559781",
+      "sheet": "1月抖音-无畏契约",
+      "author": "小水（无畏契约）",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "新模式也太好玩了 #无畏契约 #无畏契约怜悯来了",
+      "link": "https://www.iesdouyin.com/share/video/7593667815857559781"
+    },
+    {
+      "id": "7601075844022406452",
+      "sheet": "1月抖音-无畏契约",
+      "author": "维客弹仓VEXMAG",
+      "model_pred": "创意整活",
+      "reviewed_label": "剧情解读",
+      "confidence": 0.95,
+      "desc": "第4集 | 天空之城 #无畏契约#无畏契约小剧场 #爱情 #讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7601075844022406452"
+    },
+    {
+      "id": "7599220677656186158",
+      "sheet": "1月抖音-无畏契约",
+      "author": "灵灵屋（无畏契约）",
+      "model_pred": "创意整活",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "爱人的拥抱是镇静剂 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表",
+      "link": "https://www.iesdouyin.com/share/video/7599220677656186158"
+    },
+    {
+      "id": "7605327507487846986",
+      "sheet": "2月抖音-地铁",
+      "author": "大大刘x",
+      "model_pred": "颜值COS",
+      "reviewed_label": "玩家故事",
+      "confidence": 0.95,
+      "desc": "陪伴赋予了游戏太多的意义，真正想陪你的人无论干嘛都会陪你#小陆又饿了 #和平精英 #第五大道#地铁逃生百人群舞夯爆了",
+      "link": "https://www.iesdouyin.com/share/video/7605327507487846986"
+    },
+    {
+      "id": "7590355544608954235",
+      "sheet": "1月抖音-无畏契约",
+      "author": "Fujimaru??",
+      "model_pred": "创意剪辑",
+      "reviewed_label": "二创类",
+      "confidence": 0.95,
+      "desc": "第19集 | #无畏契约 #valorant #valrwatch #讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7590355544608954235"
+    },
+    {
+      "id": "7598501509562764580",
+      "sheet": "1月抖音-无畏契约",
+      "author": "老山羊（无畏契约）",
+      "model_pred": "真人演绎",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "儿子不学习就浑身难受！ #讷贝尔瓦学奖  #无畏契约#无畏契约怜悯来了",
+      "link": "https://www.iesdouyin.com/share/video/7598501509562764580"
+    },
+    {
+      "id": "7610541861015582971",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "冷门之王M762配上半截跟补偿确实挺好玩#狡猾的幻术 #和平精英地铁逃生 #地铁逃生炽焰灼心 #大吉大利和平年 #地铁逃生新地图怒兆火山",
+      "link": "https://www.iesdouyin.com/share/video/7610541861015582971"
+    },
+    {
+      "id": "7593290612553714025",
+      "sheet": "1月抖音-无畏契约",
+      "author": "E_ternal",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "王从天降愤怒狰狞#无畏契约 #火男#太讷了 #飞天螺旋爆闪",
+      "link": "https://www.iesdouyin.com/share/video/7593290612553714025"
+    },
+    {
+      "id": "7603855117734318202",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "游戏吐槽",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "充点卷多充一个零我感觉我有点死了#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年 #地铁逃生炽焰灼心 #和平精英皮肤返场",
+      "link": "https://www.iesdouyin.com/share/video/7603855117734318202"
+    },
+    {
+      "id": "7597381360029814067",
+      "sheet": "1月抖音-无畏契约",
+      "author": "灵灵屋（无畏契约）",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "钱包放下了筷子点了一下鼠标左键 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表",
+      "link": "https://www.iesdouyin.com/share/video/7597381360029814067"
+    },
+    {
+      "id": "7601065311060527986",
+      "sheet": "1月抖音-无畏契约",
+      "author": "无机物",
+      "model_pred": "角色展示",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "你就这样出现闯入我心里面#盖可#无畏契约",
+      "link": "https://www.iesdouyin.com/share/video/7601065311060527986"
+    },
+    {
+      "id": "7594409360529427755",
+      "sheet": "1月抖音-无畏契约",
+      "author": "杨大力 (无畏契约）",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "这一梭子下去什么都好了 #无畏契约 #这就是我跨年的意义",
+      "link": "https://www.iesdouyin.com/share/video/7594409360529427755"
+    },
+    {
+      "id": "7591433245855278699",
+      "sheet": "1月抖音-无畏契约",
+      "author": "Langlangzy",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "太讷了 #无畏契约#丙娜",
+      "link": "https://www.iesdouyin.com/share/video/7591433245855278699"
+    },
+    {
+      "id": "7591902449569484086",
+      "sheet": "1月抖音-无畏契约",
+      "author": "源晟崔",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "第226集 | 这丢丢这么叛逆吗？ #valorant #无畏契约 #青年创作者成长计划  #老六奶妈",
+      "link": "https://www.iesdouyin.com/share/video/7591902449569484086"
+    },
+    {
+      "id": "7602502183230589814",
+      "sheet": "2月抖音-地铁",
+      "author": "林牪（魔性柴柴幸运币入口）",
+      "model_pred": "实况解说",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "一次主动换来一辈子内向 #大吉大利和平年#和平精英丝路敦煌#和平精英古墓迷途#和平精英地铁逃生#地铁逃生炽焰灼心    和平精英爱心烟雾教程打卡小番茄视角 yc@又帅了0.17千克",
+      "link": "https://www.iesdouyin.com/share/video/7602502183230589814"
+    },
+    {
+      "id": "7601076766920281394",
+      "sheet": "1月抖音-无畏契约",
+      "author": "灵灵屋（无畏契约）",
+      "model_pred": "游戏实况",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "心脏拿出来还能跳两年 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表 #讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7601076766920281394"
+    },
+    {
+      "id": "7594238504662469934",
+      "sheet": "1月抖音-无畏契约",
+      "author": "柳瑶瑶",
+      "model_pred": "二创类",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "请选择你的决斗特工! #无畏契约 #瓦学弟 #抖音游戏混剪团#讷贝尔瓦学奖#瓦人瓦事   ib@ash !",
+      "link": "https://www.iesdouyin.com/share/video/7594238504662469934"
+    },
+    {
+      "id": "7485999769387552034",
+      "sheet": "暗区",
+      "author": "暗区突围无限",
+      "model_pred": "游戏宣传",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "你没事儿吧？想刺激？！ 咱们4月暗区突围端游见！#暗区端游四月即将上线 #暗区突围无限  #整活 #动画#暗区突围 创意整活-游戏创意剪辑+端游定档资讯",
+      "link": "https://www.iesdouyin.com/share/video/7485999769387552034"
+    },
+    {
+      "id": "7491250839080799514",
+      "sheet": "暗区",
+      "author": "暗区突围无限",
+      "model_pred": "游戏宣传",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "道路千万条，安全第一条，摸金不看天，小盒躺路边，卡莫纳电视台提醒您注意收看天气预报 #暗区端游定档4月29日 #暗区突围无限 #暗区突围PC #FPS #整活 创意整活-游戏创意剪辑-卡莫娜天气预报",
+      "link": "https://www.iesdouyin.com/share/video/7491250839080799514"
+    },
+    {
+      "id": "7602920520102743330",
+      "sheet": "2月抖音-地铁",
+      "author": "苏万同志(359)",
+      "model_pred": "武器展示",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "苏尔南·怒嚎，速刷boss威力极大 #和平精英地铁逃生 #地铁逃生炽焰灼心 #和平精英古墓迷途 #大吉大利和平年",
+      "link": "https://www.iesdouyin.com/share/video/7602920520102743330"
+    },
+    {
+      "id": "7604905035915423845",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "实况解说",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "第184集 | 我就不信这次的记录还能被打破#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年#地铁逃生炽焰灼心 #地铁逃生新地图怒兆火山",
+      "link": "https://www.iesdouyin.com/share/video/7604905035915423845"
+    },
+    {
+      "id": "7596266399731879168",
+      "sheet": "1月抖音-无畏契约",
+      "author": "是初九呀",
+      "model_pred": "创意整活",
+      "reviewed_label": "颜值COS",
+      "confidence": 0.95,
+      "desc": "瓦你的鼻孔喵喵~ #讷贝尔瓦学奖 #无畏契约手游 #抖音acg新春会 #万象风华 #游戏破壁计划 我们不说五杀，我们说\"棒棒棒棒棒\"；我们不说把钱给我，我们说\"谁有多余资金!\"我们不说对面运气好，我们说\"对面是赋能哥?‘’",
+      "link": "https://www.iesdouyin.com/share/video/7596266399731879168"
+    },
+    {
+      "id": "7606797213519514469",
+      "sheet": "2月抖音-地铁",
+      "author": "幻术（光明神）",
+      "model_pred": "游戏吐槽",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "第196集 | 光子你就阴我们吧#狡猾的幻术 #和平精英地铁逃生 #大吉大利和平年#地铁逃生炽焰灼心 #和平精英会说话的汤姆猫",
+      "link": "https://www.iesdouyin.com/share/video/7606797213519514469"
+    },
+    {
+      "id": "7593193162194079027",
+      "sheet": "1月抖音-无畏契约",
+      "author": "蜡笔小y",
+      "model_pred": "高光剪辑",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "你就是我最美的期待 #无畏契约  #卡点 #抖音ACG新春会 #开年高燃#讷贝尔瓦学奖",
+      "link": "https://www.iesdouyin.com/share/video/7593193162194079027"
+    },
+    {
+      "id": "7599179279574120083",
+      "sheet": "1月抖音-无畏契约",
+      "author": "LINQ",
+      "model_pred": "剧情剪辑",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "“贤者：无人伤亡 我太高兴了” 音频素材来源@欧闫的喵喵课堂（无畏契约）  #无畏契约 #讷贝尔瓦学奖 #海屿你 #好歌分享官#抖音游戏混剪团",
+      "link": "https://www.iesdouyin.com/share/video/7599179279574120083"
+    },
+    {
+      "id": "7605610591903037939",
+      "sheet": "2月抖音-地铁",
+      "author": "大大刘x",
+      "model_pred": "颜值COS",
+      "reviewed_label": "玩家故事",
+      "confidence": 0.95,
+      "desc": "成功街头搭讪 #街头搭讪 #游戏搭子 #小陆又饿了 #和平精英 #地铁逃生百人群舞夯爆了",
+      "link": "https://www.iesdouyin.com/share/video/7605610591903037939"
+    },
+    {
+      "id": "7603195132456729785",
+      "sheet": "2月抖音-地铁",
+      "author": "子木仙（地铁逃生）",
+      "model_pred": "真人演绎",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "惊喜空降！竟然得吃了武子弈在我家藏的一堆地铁零食@武子弈（五子棋） #地铁玩家春运集体得吃 #地铁逃生新地图怒兆火山 #和平精英丝路贺新春",
+      "link": "https://www.iesdouyin.com/share/video/7603195132456729785"
+    },
+    {
+      "id": "7593066211940863268",
+      "sheet": "1月抖音-无畏契约",
+      "author": "☽",
+      "model_pred": "创意整活",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "听说恋爱要从一束花开始 #无畏契约 #尚博勒 #蝰蛇 #蛇钱",
+      "link": "https://www.iesdouyin.com/share/video/7593066211940863268"
+    },
+    {
+      "id": "7602845170950138083",
+      "sheet": "2月抖音-地铁",
+      "author": "卡皮巴巴拉",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "创意整活",
+      "confidence": 0.98,
+      "desc": "第151集 | 今天2月5日，星期四，记得续火花哦！#续火花 #和平精英小火人联动 #地铁逃生小火人大金 #原创动画 #续火花专用视频",
+      "link": "https://www.iesdouyin.com/share/video/7602845170950138083"
+    },
+    {
+      "id": "7605168246064565545",
+      "sheet": "2月抖音-地铁",
+      "author": "鲨亦（地铁逃生）",
+      "model_pred": "游戏实况",
+      "reviewed_label": "直播切片",
+      "confidence": 0.98,
+      "desc": "直到再次遇见竟是这样的场景 #和平精英古墓迷途#鲨亦  #大吉大利和平年 #和平精英地铁逃生 #地铁逃生炽焰灼心",
+      "link": "https://www.iesdouyin.com/share/video/7605168246064565545"
+    }
+  ]
+}

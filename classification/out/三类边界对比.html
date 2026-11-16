@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>创意整活 / 游戏实况 / 高光剪辑 — 边界对比</title>
+<style>
+  :root { --bg:#f7f8fa; --panel:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+    --gt:#b91c1c; --gtbg:#fee2e2; --pred:#1d4ed8; --predbg:#dbeafe;
+    --accent:#0f766e; --focus:#a16207; --focusbg:#fef9c3; --warn:#b45309; --warnbg:#fef3c7; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0b0f14; --panel:#131a22; --ink:#e5e7eb; --muted:#9ca3af; --line:#263241;
+      --gtbg:#3f1d1d; --predbg:#172554; --gt:#fca5a5; --pred:#93c5fd;
+      --focusbg:#3b2f0b; --focus:#fde047; --warnbg:#3b2f0b; --warn:#fcd34d; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.65;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; padding:36px 20px 70px; }
+  h1 { font-size:26px; margin:0 0 6px; }
+  h2 { font-size:20px; margin:42px 0 10px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+  h3 { font-size:16px; margin:28px 0 12px; }
+  h3 .cnt { font-size:13px; color:var(--muted); font-weight:400; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:18px; margin:14px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .hd { display:flex; justify-content:space-between; align-items:center; gap:8px;
+    flex-wrap:wrap; margin-bottom:8px; }
+  a.vid { color:var(--accent); text-decoration:none; font-size:13px; white-space:nowrap;
+    border:1px solid var(--accent); padding:3px 10px; border-radius:6px; font-weight:600; }
+  a.vid:hover { background:var(--accent); color:#fff; }
+  .meta { font-size:11px; color:var(--muted); }
+  .title { font-size:14px; margin:6px 0 10px; }
+  .labels { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+  .chip { display:inline-block; font-size:12px; padding:3px 9px; border-radius:999px; }
+  .chip.gt { background:var(--gtbg); color:var(--gt); font-weight:600; }
+  .chip.pred { background:var(--predbg); color:var(--pred); font-weight:600; }
+  .chip.focus { background:var(--focusbg); color:var(--focus); }
+  .reason { font-size:12px; color:var(--muted); border-top:1px dashed var(--line);
+    padding-top:8px; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .alert { background:var(--warnbg); color:var(--warn); border:1px solid var(--warn);
+    border-radius:12px; padding:14px 18px; margin:14px 0; font-size:14px; }
+  .ask { background:rgba(15,118,110,.08); border:1px solid var(--accent);
+    border-radius:12px; padding:16px 18px; margin:16px 0; font-size:14px; }
+  ol,ul { margin:8px 0 0 20px; padding:0; } li { margin:6px 0; }
+  footer { color:var(--muted); font-size:12px; margin-top:46px; }
+
+  /* ---- 反馈框 ---- */
+  .fb { border-top:1px solid var(--line); margin-top:10px; padding-top:10px; }
+  .fb-q { font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+  .fb label { display:block; font-size:13px; margin:3px 0; cursor:pointer; }
+  .fb input[type=radio] { margin-right:6px; vertical-align:middle; }
+  .fb-other, .fb-why { width:100%; margin-top:6px; font:inherit; font-size:12.5px;
+    padding:6px 8px; border:1px solid var(--line); border-radius:6px;
+    background:var(--bg); color:var(--ink); resize:vertical; }
+  .fb-other { display:none; }
+  .fb.show-other .fb-other { display:block; }
+  .card.done { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+
+  /* ---- 悬浮工具条 ---- */
+  .bar { position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:var(--panel); border-top:1px solid var(--line);
+    padding:10px 20px; display:flex; gap:12px; align-items:center;
+    flex-wrap:wrap; box-shadow:0 -2px 12px rgba(0,0,0,.08); }
+  .bar .prog { font-size:13px; font-variant-numeric:tabular-nums; }
+  .bar .prog b { color:var(--accent); font-size:16px; }
+  .bar .track { flex:1; min-width:120px; height:8px; background:var(--line);
+    border-radius:999px; overflow:hidden; }
+  .bar .fill { height:100%; width:0; background:var(--accent); transition:width .2s; }
+  .btn { font:inherit; font-size:13px; padding:7px 14px; border-radius:8px;
+    border:1px solid var(--accent); background:var(--accent); color:#fff;
+    cursor:pointer; font-weight:600; }
+  .btn.ghost { background:transparent; color:var(--accent); }
+  .btn:hover { opacity:.88; }
+  .toast { position:fixed; bottom:70px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:8px;
+    font-size:13px; z-index:60; opacity:0; transition:opacity .25s; pointer-events:none; }
+  .toast.show { opacity:1; }
+  body { padding-bottom:64px; }
+</style></head><body><div class="wrap">
+  <h1>「创意整活 / 游戏实况 / 高光剪辑」边界对比</h1>
+  <p class="sub">B站 500 条 + 抖音/快手 446 条 · 共 49 条三类互混 + 250 条两边一致 ·
+     模型 gemini-2.5-flash · 2026-11-16</p>
+
+  <div class="alert">
+    <b>为什么把这三类单独拎出来。</b>
+    v3（抖音/快手）和 v4（B站）两个数据集、三次提示词实验（v9/v10/v11）都卡在这里：
+    改提示词会「按下葫芦浮起瓢」——同一处改动在某些表 +8pp、在另一些表 −10pp，
+    因为不同工作表对这三类的判法本身就不一致。<b>这不是模型能力问题，是口径问题。</b>
+  </div>
+
+  <div class="ask">
+    <b>希望你帮忙判断的是：</b>
+    <ol>
+      <li>逐条点开视频看，<b>Excel 和模型谁更合理</b>？还是两者都说得通（那就该列为口径分歧对）？</li>
+      <li>如果 Excel 更合理，<b>你判断时看的是什么</b>？——是画面特征、剪辑方式、还是创作意图？</li>
+      <li>这三类之间，<b>有没有一条可以写成规则的判定顺序</b>？
+          比如「先看有没有脱离对局的设计 → 再看是否多段快剪 → 否则算实况」。</li>
+    </ol>
+    有了明确的判定顺序，我可以直接写进提示词并用 dev/test 验证是否真的涨。
+  </div>
+
+  <h2>一、混淆方向与标注员的「创意侧重点」</h2>
+  <p class="sub">「创意侧重点」是 Excel 里标注员自己填的，往往能反映当时的判断角度。</p>
+  <div class="panel"><table>
+    <tr><th>混淆方向</th><th class="num">条数</th><th>Excel 的创意侧重点</th></tr>
+    <tr><td>游戏实况 → 创意整活</td><td class="num">19</td><td>游戏实况×10、（空）×4、地铁逃生×3、ai吉莉×2</td></tr><tr><td>高光剪辑 → 创意整活</td><td class="num">11</td><td>高光剪辑×7、（空）×4</td></tr><tr><td>创意整活 → 游戏实况</td><td class="num">7</td><td>（空）×6、创意整活×1</td></tr><tr><td>高光剪辑 → 游戏实况</td><td class="num">6</td><td>（空）×4、高光剪辑×2</td></tr><tr><td>创意整活 → 高光剪辑</td><td class="num">5</td><td>（空）×5</td></tr><tr><td>游戏实况 → 高光剪辑</td><td class="num">1</td><td>游戏实况×1</td></tr>
+  </table></div>
+
+  <h2>二、混淆样本（49 条）</h2>
+  
+  <h3>Excel 判「游戏实况」，模型判「创意整活」　<span class="cnt">19 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11QsbzqEie" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 极光丶オーロラ · 0:21 · 1,224,151 播放</span>
+  </div>
+  <div class="title">qq传的情报是真的，8kw史上最高撤离（划掉）诞生了 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过展示游戏内玩家个人数据和对局历史，最终聚焦于一局“越狱失败”中玩家损失了高达8700万的价值，结合描述“8kw史上最高撤离（划掉）诞生了”，以幽默讽刺的方式呈现了游戏中的极端且具有梗点的事件，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV11QsbzqEie" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV11QsbzqEie" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV11QsbzqEie" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV11QsbzqEie" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV11QsbzqEie" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV12541z9Ev5" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 赵灵粥- · 1:28 · 1,562,678 播放</span>
+  </div>
+  <div class="title">她不围着我转就算了，怎么还把我萌的团团转啊！@比心app</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏角色和配音演绎了一个有剧本的搞笑剧情，包括游戏大厅的对话和游戏内的追逐、唱歌等互动，内容核心是梗和脑洞，符合“创意整活”的定义。</div>
+
+  <div class="fb" data-id="BV12541z9Ev5" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV12541z9Ev5" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV12541z9Ev5" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV12541z9Ev5" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV12541z9Ev5" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV14CWEzuE3b" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 赵灵粥- · 1:28 · 855,523 播放</span>
+  </div>
+  <div class="title">我决定为了贴贴原谅这个世界5分钟!!@比心app</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏画面和角色，配合配音和字幕，演绎了一段有明确剧本和角色设定的搞笑剧情，主要围绕玩家之间的互动和对话展开，符合&#x27;游戏角色演绎完整搞笑剧情/脑洞/跨场景创意（非单局常规过程）&#x27;的定义。</div>
+
+  <div class="fb" data-id="BV14CWEzuE3b" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV14CWEzuE3b" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV14CWEzuE3b" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV14CWEzuE3b" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV14CWEzuE3b" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV14F4jzrE71" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 德国人劳大 · 11:38 · 1,066,885 播放</span>
+  </div>
+  <div class="title">一图最贪吃的队友</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：地铁逃生</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《和平精英》游戏画面为主，包含玩家在单局游戏内进行的“老鼠套”测试（一种玩家互动和搞笑行为），以及游戏结束后在仓库界面围绕“火焰刀”进行的价格讨论和炫耀。整个过程有清晰的口播对话，并由画外音设定了“测试队友”的喜剧前提，构成了一个有预设情节和喜剧效果的“整活”内容，而非单纯的实况记录。</div>
+
+  <div class="fb" data-id="BV14F4jzrE71" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV14F4jzrE71" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV14F4jzrE71" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV14F4jzrE71" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV14F4jzrE71" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1CZxxzfE5W" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 玖面三角洲,柠雨collect · 0:30 · 1,183,527 播放</span>
+  </div>
+  <div class="title">原来是在等BGM -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过旁白口播引导，结合游戏内拾取特殊物品（非洲之心）和遇到特定角色（火箭兵），最终播放音乐，形成了一个有设计感的搞笑情景，核心在于内容的梗与脑洞，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV1CZxxzfE5W" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1CZxxzfE5W" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1CZxxzfE5W" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1CZxxzfE5W" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1CZxxzfE5W" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1ddxPzDEF3" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 32分钟_和平精英 · 11:51 · 833,735 播放</span>
+  </div>
+  <div class="title">请给队友多一点包容和鼓励，和平精英不是只有竞技！</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频内容为游戏角色在游戏内演绎的剧本化剧情，即“特种兵训练营”的设定和对话，而非常规单局游戏过程中的自然互动或主播解说。这符合创意整活中“游戏角色演绎完整搞笑剧情/脑洞/跨场景创意（非单局常规过程）”的定义。</div>
+
+  <div class="fb" data-id="BV1ddxPzDEF3" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1ddxPzDEF3" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1ddxPzDEF3" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1ddxPzDEF3" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1ddxPzDEF3" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1EdsozBEkH" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 爱吃莓汁の萝卜酱 · 3:06 · 1,234,110 播放</span>
+  </div>
+  <div class="title">当你的野排队友假装说出心了，而你掏出来一颗真的，会发生什么?</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以游戏画面为主，通过玩家间的语音互动和后期添加的女性旁白，讲述了一个围绕“出心了”（失去真心/拿出钻石）的谐音梗和搞笑剧情。旁白对游戏内发生的创意情景进行叙述和铺垫，而非单纯的战术讲解或游戏过程记录，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV1EdsozBEkH" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1EdsozBEkH" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1EdsozBEkH" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1EdsozBEkH" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1EdsozBEkH" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1FdnCz4EPh" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 奔小奔Plus · 4:38 · 1,246,841 播放</span>
+  </div>
+  <div class="title">3发仙丹拿潮汐救赎，含泪跪舔爽文人生！霸总给力啊</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以单局游戏过程为主，但通过大量非游戏素材（如表情包、meme图）的混搭，以及主播以夸张、搞笑的口吻讲述一个带有“爽文”色彩的剧情（如“霸总给力啊”、“大哥爱上我”、“百万撤离”），营造出强烈的喜剧效果和脑洞创意，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV1FdnCz4EPh" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1FdnCz4EPh" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1FdnCz4EPh" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1FdnCz4EPh" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1FdnCz4EPh" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1fdxMzTEZM" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 太一_世界之盾 · 0:38 · 627,538 播放</span>
+  </div>
+  <div class="title">这就是女主视角吗 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以游戏实况为基础，但玩家通过夸张的语音互动、游戏内聊天对话（角色“露娜”的表白）、浪漫背景音乐和表情包，共同演绎了一个搞笑的脑洞剧情，并混入了非游戏素材（结尾关注页），符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV1fdxMzTEZM" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1fdxMzTEZM" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1fdxMzTEZM" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1fdxMzTEZM" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1fdxMzTEZM" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1hZHnzSEnG" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 若牛牛 · 3:26 · 3,020,181 播放</span>
+  </div>
+  <div class="title">《3选1挑战第九期》</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：地铁逃生</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以&#x27;3选1挑战&#x27;这一非常规游戏玩法为核心创意（脑洞/自创玩法），全程有玩家对话和讲解。视频中包含非游戏素材混搭（如1:20-1:26的选手介绍动画，以及贯穿始终的表情包/meme贴图），符合判定规程中&#x27;创意整活&#x27;的定义：用游戏画面、游戏角色或游戏梗做搞笑、抽象、脑洞、整活向内容，且包含非游戏素材混搭。</div>
+
+  <div class="fb" data-id="BV1hZHnzSEnG" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1hZHnzSEnG" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1hZHnzSEnG" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1hZHnzSEnG" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1hZHnzSEnG" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1M8xPzzE5X" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 秋悦地铁逃生 · 7:33 · 4,078,603 播放</span>
+  </div>
+  <div class="title">“你是个好人”</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：ai吉莉</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《和平精英》游戏画面为主，通过玩家与AI队友吉利的对话，演绎了一段带有幽默和玩梗性质的剧本化剧情，包括AI队友的误解（如“马地铁模式”）、玩家的夸张反应以及非游戏素材（动画短片）的混搭，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="BV1M8xPzzE5X" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1M8xPzzE5X" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1M8xPzzE5X" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1M8xPzzE5X" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1M8xPzzE5X" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1QDHNzuEAv" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 若牛牛 · 2:42 · 1,410,812 播放</span>
+  </div>
+  <div class="title">《3选1挑战第十期》</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：地铁逃生</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《和平精英》游戏画面为主，通过主播与队友（或AI配音）的对话，围绕一个“3选1挑战”的剧本进行游戏。内容包含选择奇葩装备（如狙击枪+2级头、5级甲），并穿插大量表情包和非游戏素材（如带有“整活”星级评价的过渡画面），整体呈现出搞笑、脑洞的创意整活效果，而非单纯的游戏过程记录或连续讲解。</div>
+
+  <div class="fb" data-id="BV1QDHNzuEAv" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1QDHNzuEAv" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1QDHNzuEAv" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1QDHNzuEAv" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1QDHNzuEAv" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1SMW4zKE1S" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 盛弟弟和平精英 · 2:09 · 1,233,331 播放</span>
+  </div>
+  <div class="title">我的logo号到底是谁在打呀？</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：ai吉莉</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以单局游戏过程为背景，但核心内容是围绕AI队友“吉莉”展开的剧本化搞笑剧情，包括玩家发现“吉莉”抢人头、怀疑“吉莉”在玩自己的号、与“吉莉”对话互动并最终合作吃鸡。这种有明确喜剧设定和叙事线的玩法属于创意整活。</div>
+
+  <div class="fb" data-id="BV1SMW4zKE1S" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1SMW4zKE1S" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1SMW4zKE1S" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1SMW4zKE1S" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1SMW4zKE1S" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1TM1KB3EL5" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 赵灵粥- · 1:36 · 969,119 播放</span>
+  </div>
+  <div class="title">陪丸圈来了个老纳，萝莉我笑纳了，御姐我也笑纳了。</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频使用游戏画面和角色，通过配音和字幕演绎了完整的搞笑剧情，角色之间有明确的对话和角色扮演（如妈咪、坏女人、小孩），符合创意整活中“游戏角色演绎完整搞笑剧情/脑洞”的定义。</div>
+
+  <div class="fb" data-id="BV1TM1KB3EL5" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1TM1KB3EL5" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1TM1KB3EL5" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1TM1KB3EL5" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1TM1KB3EL5" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1zjyrBfEWR" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 千珏阿羊一 · 6:16 · 1,618,751 播放</span>
+  </div>
+  <div class="title">感受来自绝密的愤怒!! 感谢大家喜爱</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过剪辑游戏失败画面、玩家在仓库卖装备、改装武器、再次出击等片段，并配以夸张的口播（如“猛攻开始了”、“这啥雷霆枪啊”），构建了一个带有搞笑和“复仇”主题的剧本化内容，而非单纯记录单局游戏过程或连续讲解。</div>
+
+  <div class="fb" data-id="BV1zjyrBfEWR" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1zjyrBfEWR" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1zjyrBfEWR" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1zjyrBfEWR" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1zjyrBfEWR" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7607309148467808891" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 和平精英地铁逃生 · 幻术（光明神） · 0:30</span>
+  </div>
+  <div class="title">第198集 | v区人气榜一#狡猾的幻术 #和平精英地铁逃生 #地铁逃生炽焰灼心 #大吉大利和平年</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了玩家获得游戏内“人气王”称号，并以夸张的特效和旁白，在游戏准备阶段演绎了“人气王降临”的创意场景，脱离了常规单局游戏过程，属于有设计感的创意内容。</div>
+
+  <div class="fb" data-id="7607309148467808891" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7607309148467808891" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7607309148467808891" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7607309148467808891" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7607309148467808891" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7590962724218178816" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 锐 · 6:12</span>
+  </div>
+  <div class="title">第1集 | 整个走廊就我们班最吵?? #美服瓦罗兰特 #瓦罗兰特 #无畏契约 #打瓦日常 #valorant</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏画面、玩家语音对话和角色头像，结合文字说明，剪辑呈现了多段游戏内发生的搞笑玩家互动和对话，具有明显的创意和整活性质，符合&#x27;虚拟/游戏角色在虚拟世界中演绎剧情&#x27;的创意整活定义。</div>
+
+  <div class="fb" data-id="7590962724218178816" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7590962724218178816" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7590962724218178816" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7590962724218178816" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7590962724218178816" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7599176135239738097" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 废物点心 · 1:27</span>
+  </div>
+  <div class="title">变如脸 #无畏契约 #瓦罗兰特 #游戏日常 #神操作 #变脸</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《无畏契约》游戏画面为主，通过玩家的口播讲解和游戏内聊天记录，以及角色做出搞怪动作（变脸），讲述了一个队友从抱怨到态度转变的幽默故事。内容核心是围绕游戏内玩家互动进行的搞笑创意呈现，符合创意整活的定义。</div>
+
+  <div class="fb" data-id="7599176135239738097" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7599176135239738097" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7599176135239738097" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7599176135239738097" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7599176135239738097" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7594409360529427755" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 杨大力 (无畏契约） · 0:27</span>
+  </div>
+  <div class="title">这一梭子下去什么都好了 #无畏契约 #这就是我跨年的意义</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》游戏中角色排成一列被射击的非常规、剧本化场景，脱离了常规单局游戏过程，具有明显的创意和整活性质，并配有背景音乐。</div>
+
+  <div class="fb" data-id="7594409360529427755" data-gt="游戏实况" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7594409360529427755" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7594409360529427755" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7594409360529427755" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7594409360529427755" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+  <h3>Excel 判「高光剪辑」，模型判「创意整活」　<span class="cnt">11 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV12vx4zeE3W" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 和平精英毁约y · 1:31 · 1,191,774 播放</span>
+  </div>
+  <div class="title">制裁</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏画面、主播口播、文字特效和meme图，演绎了“引诱对手退出”的搞笑剧情，核心是创意和整活效果，符合“游戏角色演绎完整搞笑剧情/脑洞/跨场景创意”的定义，且包含非游戏素材混搭。</div>
+
+  <div class="fb" data-id="BV12vx4zeE3W" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV12vx4zeE3W" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV12vx4zeE3W" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV12vx4zeE3W" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV12vx4zeE3W" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1ArHVzEEGu" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 胡燃李信 · 0:58 · 696,970 播放</span>
+  </div>
+  <div class="title">移动的霸体 李信与盾山的组合技 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以动画形式引入一个关于李信和盾山组合的幽默设想，通过游戏内多段高光操作剪辑来展示这一概念，并以动画和幽默对话收尾，符合“用游戏画面/角色演绎完整搞笑剧情/脑洞/跨场景创意”的定义，且混搭了非游戏素材（动画）。</div>
+
+  <div class="fb" data-id="BV1ArHVzEEGu" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1ArHVzEEGu" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1ArHVzEEGu" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1ArHVzEEGu" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1ArHVzEEGu" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1eTxRz4EJM" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 和平精英毁约y · 2:25 · 1,509,904 播放</span>
+  </div>
+  <div class="title">制裁</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主要内容是游戏角色在训练场进行有剧本的搞笑对话，对话围绕吐槽其他主播展开，并穿插表情包，属于游戏角色演绎剧情的创意内容。</div>
+
+  <div class="fb" data-id="BV1eTxRz4EJM" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1eTxRz4EJM" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1eTxRz4EJM" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1eTxRz4EJM" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1eTxRz4EJM" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1GdxezPET2" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 天才小澜ovo · 1:27 · 1,051,702 播放</span>
+  </div>
+  <div class="title">我这一生都在寻找强者，可到最后我才发现我便是最强 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏高光操作剪辑而成，并配有夸张、戏剧化的口播解说，形成了一个围绕“寻找强者，最终发现自己最强”的创意叙事，符合创意整活中“用游戏画面、游戏角色或游戏梗做搞笑、抽象、脑洞、整活向内容”的定义，且口播内容具有剧本化剧情的特点。</div>
+
+  <div class="fb" data-id="BV1GdxezPET2" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1GdxezPET2" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1GdxezPET2" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1GdxezPET2" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1GdxezPET2" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1HDHPznE3b" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 冲杯咖啡本人 · 1:19 · 1,014,253 播放</span>
+  </div>
+  <div class="title">不好意思亲爱的帅哥美女们，帅到你们真的很抱歉✌️ -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主体为王者荣耀游戏实况，伴有作者的幽默口播讲解和多个表情包（非游戏素材）的混搭，通过梗和脑洞来制造搞笑效果，符合创意整活的定义和判别标准。</div>
+
+  <div class="fb" data-id="BV1HDHPznE3b" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1HDHPznE3b" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1HDHPznE3b" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1HDHPznE3b" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1HDHPznE3b" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1rpHGzrE3f" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 制裁哥丶 · 1:00 · 1,092,952 播放</span>
+  </div>
+  <div class="title">葫芦娃救爷爷 一个一个上，最后整整齐齐的！</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏画面、幽默口播和字幕，演绎了“葫芦娃救爷爷”的搞笑梗，玩家在单局游戏中面对敌人一个接一个送上门的场景，核心是内容的创意和脑洞，而非单纯的游戏过程记录或策略讲解。</div>
+
+  <div class="fb" data-id="BV1rpHGzrE3f" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1rpHGzrE3f" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1rpHGzrE3f" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1rpHGzrE3f" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1rpHGzrE3f" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1tVHNzvE2Z" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 和平精英 · 91坤崽 · 1:34 · 2,612,487 播放</span>
+  </div>
+  <div class="title">被迫营业？【前三十万粉丝我宠定了！！！】</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《和平精英》游戏内玩家互动（对手要求换视角、鞭尸）为核心，通过主播的连续口播讲解、幽默的字幕（如&#x27;?&#x27;、&#x27;不是大哥你好好端端为什么要鞭我啊&#x27;）和背景音乐（儿童歌曲）来营造搞笑氛围，展现了有梗和脑洞的创意内容，符合&#x27;创意整活&#x27;的定义，而非单纯的实况解说或高光剪辑。</div>
+
+  <div class="fb" data-id="BV1tVHNzvE2Z" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1tVHNzvE2Z" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1tVHNzvE2Z" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1tVHNzvE2Z" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1tVHNzvE2Z" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7597072690831517823" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 晴小晴 · 0:23</span>
+  </div>
+  <div class="title">炼狱叔叔生气了 #无畏契约 #瓦罗兰特 #赛级 #魅魔 #炼狱</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频将游戏角色模型（炼狱）的非常规动画（如摆姿势、跳舞）与游戏实况片段进行混剪，通过角色模型演绎和背景音乐营造出搞笑或脑洞效果，结合描述中的“炼狱叔叔生气了”、“魅魔”，符合游戏角色演绎创意剧情的特征。</div>
+
+  <div class="fb" data-id="7597072690831517823" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7597072690831517823" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7597072690831517823" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7597072690831517823" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7597072690831517823" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7597015387834401000" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 瓦力（无畏契约） · 0:29</span>
+  </div>
+  <div class="title">西装暴徒#无畏契约怜悯来了 #无畏契约</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频前半段展示了游戏高光击杀（ace），后半段则切换到游戏角色Chamber的创意动画展示，配有音乐和特效。这种将游戏实况与脱离常规单局的创意角色演绎结合，符合「创意整活」中“脑洞/跨场景创意”的定义。</div>
+
+  <div class="fb" data-id="7597015387834401000" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7597015387834401000" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7597015387834401000" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7597015387834401000" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7597015387834401000" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7598417233803415270" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 小毛 · 0:27</span>
+  </div>
+  <div class="title">#昭陪 @9.9萌宠电竞 笑了半个小时才舍得发出来#求偶式瞄准挑战 #无畏契约 #在哭泣</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内操作快速剪辑而成，背景音乐配合，核心内容是展示一个玩家在游戏中使用技能时出现的搞笑、脑洞效果（技能在墙上弹跳形成趣味图案），与描述中的“笑了半个小时才舍得发出来”和“#求偶式瞄准挑战”相符，属于用游戏素材进行搞笑整活。</div>
+
+  <div class="fb" data-id="7598417233803415270" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7598417233803415270" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7598417233803415270" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7598417233803415270" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7598417233803415270" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7599572553930659685" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 乔 · 0:24</span>
+  </div>
+  <div class="title">炼狱这个魅 #无畏契约 #炼狱 #魅魔</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频包含游戏角色在非常规单局过程中进行的搞笑、夸张的舞蹈和动作演绎（如角色跳舞、夸张的背景元素），并穿插了少量游戏实况片段，整体呈现出一种脑洞大开的幽默创意，符合&#x27;创意整活&#x27;的定义。</div>
+
+  <div class="fb" data-id="7599572553930659685" data-gt="高光剪辑" data-pred="创意整活">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7599572553930659685" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7599572553930659685" value="model"> 模型对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7599572553930659685" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7599572553930659685" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+  <h3>Excel 判「创意整活」，模型判「游戏实况」　<span class="cnt">7 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1UJn2zmEw7" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 是小啊满 · 0:16 · 2,442,211 播放</span>
+  </div>
+  <div class="title">油盐不进是吧</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+    <span class="chip focus">创意侧重点：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了游戏内的HUD和玩家头像，记录了两位玩家在游戏过程中进行的一段幽默对话，属于单局游戏内发生的搞笑玩家互动，符合&#x27;游戏实况&#x27;的定义和&#x27;最易错边界A&#x27;的说明。</div>
+
+  <div class="fb" data-id="BV1UJn2zmEw7" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1UJn2zmEw7" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_BV1UJn2zmEw7" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1UJn2zmEw7" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1UJn2zmEw7" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7603070403749643432" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 和平精英地铁逃生 · 小姚（关注免费扶贫） · 1:44</span>
+  </div>
+  <div class="title">我也是醉了 #和平精英丝路贺新春 #和平精英地铁逃生#地铁逃生炽焰灼心#游戏破壁计划</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《和平精英》单局游戏过程中，多名玩家进行同步舞蹈和移动的互动行为，背景有游戏音效和音乐，没有主播连续讲解，符合单局游戏内玩家互动和搞笑事件的定义。</div>
+
+  <div class="fb" data-id="7603070403749643432" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7603070403749643432" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7603070403749643432" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7603070403749643432" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7603070403749643432" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7591433985264774777" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 小水（无畏契约） · 0:37</span>
+  </div>
+  <div class="title">C大一个詹姆斯 #无畏契约 #这就是我跨年的意义</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》单局游戏过程中的连续操作，包括玩家射击、使用角色技能（Yoru的终极技能）和最终被击败。虽然中间穿插了短暂的趣味性编辑（如小丑脸），但所有事件都发生在同一局游戏内，且没有主播连续讲解或直播特征，符合&#x27;游戏实况&#x27;的定义，特别是&#x27;最易错边界 A&#x27;中提到的单局游戏过程中发生的搞笑、脑洞、意外事件。</div>
+
+  <div class="fb" data-id="7591433985264774777" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7591433985264774777" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7591433985264774777" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7591433985264774777" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7591433985264774777" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7591000118661469514" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · momo · 0:25</span>
+  </div>
+  <div class="title">#无畏契约 #瓦罗兰特#抖音acg新春会 #开年高燃#游戏破壁计划</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》单局游戏过程中的一段玩家操作，包含游戏HUD和背景音乐，没有主播出镜、连续讲解或直播特征。虽然有视角切换（类似击杀回放），但仍围绕单次游戏内互动，符合游戏实况的定义。</div>
+
+  <div class="fb" data-id="7591000118661469514" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7591000118661469514" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7591000118661469514" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7591000118661469514" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7591000118661469514" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7592323627924622598" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 聪明zhou · 0:42</span>
+  </div>
+  <div class="title">我们是蒙多#无畏契约 #瓦</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》的单局游戏过程，画面以局内视角为主，并伴有玩家之间的自然语音对话，没有主播出镜或连续讲解。</div>
+
+  <div class="fb" data-id="7592323627924622598" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7592323627924622598" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7592323627924622598" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7592323627924622598" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7592323627924622598" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7597381360029814067" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 灵灵屋（无畏契约） · 0:15</span>
+  </div>
+  <div class="title">钱包放下了筷子点了一下鼠标左键 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》单局游戏过程，包含玩家间的自然语音和一次搞笑的击杀互动（敌人跳舞被刀），无主播连续讲解或直播特征，符合游戏实况的定义。</div>
+
+  <div class="fb" data-id="7597381360029814067" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7597381360029814067" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7597381360029814067" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7597381360029814067" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7597381360029814067" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7591433245855278699" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · Langlangzy · 0:21</span>
+  </div>
+  <div class="title">太讷了 #无畏契约#丙娜</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》中角色Reyna在单局游戏中使用大招“力克千钧”的画面，角色变身效果明显，配有背景音乐，无主播讲解或直播特征。根据最易错边界A，单局游戏过程中发生的角色变身属于游戏实况。</div>
+
+  <div class="fb" data-id="7591433245855278699" data-gt="创意整活" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7591433245855278699" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7591433245855278699" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7591433245855278699" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7591433245855278699" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+  <h3>Excel 判「高光剪辑」，模型判「游戏实况」　<span class="cnt">6 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV13dWkzEEnW" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 苏木超级宠粉 · 0:17 · 986,466 播放</span>
+  </div>
+  <div class="title">单杀两万分国服兰陵王，细节太多，建议反复观看 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《王者荣耀》单局游戏中的一个连续击杀过程，画面包含游戏内HUD和聊天记录。背景音乐和简短的画外音（&#x27;单杀两万分国服兰陵王，细节太多，建议反复观看&#x27;）是对该精彩操作的总结性评论，而非对操作或战术的连续讲解。不符合直播特征、多段高光剪辑或创意整活的定义。</div>
+
+  <div class="fb" data-id="BV13dWkzEEnW" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV13dWkzEEnW" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV13dWkzEEnW" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV13dWkzEEnW" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV13dWkzEEnW" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1byxAzgEph" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 三角洲yoki · 1:26 · 1,736,671 播放</span>
+  </div>
+  <div class="title">三角洲行动 麦晓雯の解压小游戏</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主要展示了《三角洲行动》的单局游戏过程，包括击杀、搜刮和移动，伴有背景音乐和玩家的少量自然语音反应（如“等最后一秒”、“吃饱饱丢包撤”），但没有主播连续讲解或直播特征。</div>
+
+  <div class="fb" data-id="BV1byxAzgEph" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1byxAzgEph" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1byxAzgEph" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1byxAzgEph" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1byxAzgEph" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7592996561282782346" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 深海鳕鱼堡 · 0:18</span>
+  </div>
+  <div class="title">#无畏契约 #唐氏综合征 #少萝 #猎奇</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》单局游戏过程，从买枪阶段到最终获得ACE的连续操作，画面中无直播特征，无主播出镜或连续讲解，仅有游戏内语音和音效。根据判定规程，单局游戏过程中发生的意外事件（如ACE）属于游戏实况。</div>
+
+  <div class="fb" data-id="7592996561282782346" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7592996561282782346" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7592996561282782346" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7592996561282782346" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7592996561282782346" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7590686812834696475" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 灵灵屋（无畏契约） · 0:37</span>
+  </div>
+  <div class="title">如果觉得太累 及时道别并没有错 #无畏契约</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》的单局游戏过程，包含角色技能使用和战斗，无主播出镜或连续讲解，仅有背景音乐。符合游戏实况的定义：单局游戏过程 + 自然语音/队内对话，无主播出镜与连续讲解。</div>
+
+  <div class="fb" data-id="7590686812834696475" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7590686812834696475" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7590686812834696475" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7590686812834696475" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7590686812834696475" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7599587606661319982" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 桐谷和人 · 0:37</span>
+  </div>
+  <div class="title">我不许有人嘲笑ovo准星#超燃 #五杀 #无畏契约#讷贝尔瓦学奖</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》的单局游戏过程，包含玩家的自然语音反应（如多次惊呼“什么？！”），但没有主播出镜或连续的讲解，符合游戏实况的定义，且其搞笑元素属于单局内发生的事件。</div>
+
+  <div class="fb" data-id="7599587606661319982" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7599587606661319982" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7599587606661319982" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7599587606661319982" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7599587606661319982" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7601076766920281394" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 灵灵屋（无畏契约） · 0:27</span>
+  </div>
+  <div class="title">心脏拿出来还能跳两年 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表 #讷贝尔瓦学奖</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip pred">模型：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》的单局游戏过程，玩家使用技能进行位移和侦察，有队友的自然语音对话（如“我方还剩一人”、“全部都在”），但无主播出镜或连续讲解游戏操作。</div>
+
+  <div class="fb" data-id="7601076766920281394" data-gt="高光剪辑" data-pred="游戏实况">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7601076766920281394" value="excel"> Excel 对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7601076766920281394" value="model"> 模型对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_7601076766920281394" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7601076766920281394" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+  <h3>Excel 判「创意整活」，模型判「高光剪辑」　<span class="cnt">5 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7599978996482313510" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 灵灵屋（无畏契约） · 0:11</span>
+  </div>
+  <div class="title">下把起航母 #无畏契约 #这个春节瓦梗会玩 #瓦梗课代表</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》游戏中的一次多杀（ACE），画面快速切换，有击杀提示和最终的&#x27;王牌精锐&#x27;战绩字幕，并配有搞笑音效，符合高光剪辑的特征。</div>
+
+  <div class="fb" data-id="7599978996482313510" data-gt="创意整活" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7599978996482313510" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7599978996482313510" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7599978996482313510" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7599978996482313510" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7594162512652774858" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 伊川肆 · 0:46</span>
+  </div>
+  <div class="title">压制 手法 绝境 突破 自我 证明  巅峰 枷锁 答案 依赖 尽头 诠释 冷静 逆境 自信 无限 打破 困局 质疑 逆转 磨炼 极限 止步 假象 结果 终将 问鼎 冷静 挣脱 限制 领域 绝巅 过去 诀别 回忆 束缚 破镜 零碎 绝劣 缺口 细节 天赋 突破 诠释 天赋 专注 冷静 细节 手法 摆脱 心态 上限 破局 </div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段《无畏契约》游戏内精彩操作和击杀片段快速剪辑而成，配有节奏感强的背景音乐并与画面动作卡点，旨在展示高光瞬间。</div>
+
+  <div class="fb" data-id="7594162512652774858" data-gt="创意整活" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7594162512652774858" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7594162512652774858" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7594162512652774858" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7594162512652774858" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7593667815857559781" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · 小水（无畏契约） · 0:40</span>
+  </div>
+  <div class="title">新模式也太好玩了 #无畏契约 #无畏契约怜悯来了</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》游戏中的多段击杀和高光操作，最终获得“王牌精锐”成就，剪辑节奏快，聚焦于精彩瞬间，符合高光剪辑的特征。</div>
+
+  <div class="fb" data-id="7593667815857559781" data-gt="创意整活" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7593667815857559781" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7593667815857559781" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7593667815857559781" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7593667815857559781" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.iesdouyin.com/share/video/7593290612553714025" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">抖音 · 无畏契约 · E_ternal · 0:23</span>
+  </div>
+  <div class="title">王从天降愤怒狰狞#无畏契约 #火男#太讷了 #飞天螺旋爆闪</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《无畏契约》游戏内角色使用技能（火男的飞天螺旋爆闪）并完成击杀的精彩瞬间，配有背景音乐，通过剪辑突出高光操作，符合高光剪辑强调精彩瞬间和BGM的特点。</div>
+
+  <div class="fb" data-id="7593290612553714025" data-gt="创意整活" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_7593290612553714025" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_7593290612553714025" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_7593290612553714025" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_7593290612553714025" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.kuaishou.com/short-video/3xuhpfipdiypu5i" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">快手 · 暗区突围 · 文博(暗区突围) · 0:26 · 2,366,858 播放</span>
+  </div>
+  <div class="title">无坚不摧 唯快不破 #暗区突围</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip pred">模型：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了玩家在游戏内连续完成两次精彩击杀，时长短，节奏紧凑，旨在突出玩家的战斗技巧和高光操作，符合高光剪辑的定义。</div>
+
+  <div class="fb" data-id="3xuhpfipdiypu5i" data-gt="创意整活" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_3xuhpfipdiypu5i" value="excel"> Excel 对（<b>创意整活</b>）</label>
+    <label><input type="radio" name="v_3xuhpfipdiypu5i" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_3xuhpfipdiypu5i" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_3xuhpfipdiypu5i" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+  <h3>Excel 判「游戏实况」，模型判「高光剪辑」　<span class="cnt">1 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1CUsLzwERr" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 乚oserXM · 1:14 · 1,196,247 播放</span>
+  </div>
+  <div class="title">78点位之黑室吃人航空箱 行家里手轻松逃课</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip pred">模型：高光剪辑</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内击杀和精彩操作的片段快速剪辑而成，没有连续的单局游戏过程，也没有主播讲解，符合高光剪辑的特征。</div>
+
+  <div class="fb" data-id="BV1CUsLzwERr" data-gt="游戏实况" data-pred="高光剪辑">
+    <div class="fb-q">你的判断：</div>
+    <label><input type="radio" name="v_BV1CUsLzwERr" value="excel"> Excel 对（<b>游戏实况</b>）</label>
+    <label><input type="radio" name="v_BV1CUsLzwERr" value="model"> 模型对（<b>高光剪辑</b>）</label>
+    <label><input type="radio" name="v_BV1CUsLzwERr" value="both"> 两者都通（口径分歧）</label>
+    <label><input type="radio" name="v_BV1CUsLzwERr" value="neither"> 都不对</label>
+    <input class="fb-other" type="text" placeholder="若都不对，应该是哪一类？">
+    <textarea class="fb-why" rows="2" placeholder="你是看什么判断的？（画面特征 / 剪辑方式 / 创作意图…）"></textarea>
+  </div>
+</div></div>
+
+
+  <h2>三、对照：两边一致的样本</h2>
+  <p class="sub">这些没有歧义，可以用来对比「什么情况下判法是清楚的」。</p>
+  
+  <h3>两边都判「创意整活」　<span class="cnt">共 204 条，展示 6 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11axfzdEYj" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 蛋仔派对 · 魔鬼鱼秀儿 · 3:52 · 4,486,312 播放</span>
+  </div>
+  <div class="title">蛋仔派对：打碎自己就过关？这次蛋壳真碎了，哈哈哈！</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：整活向玩法</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以《蛋仔派对》游戏画面为主，通过配音（男女声对话）和字幕，演绎了“打碎自己才能过关”的搞笑剧情和脑洞玩法。视频中穿插了真人表情包和动画人物反应，属于非游戏素材混搭，符合创意整活的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11g4nznEZV" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 蛋仔派对 · 游小浪Game · 3:48 · 1,336,238 播放</span>
+  </div>
+  <div class="title">蛋仔派对：每过一关消失一个部位2？视觉听觉也全没了，太难了吧</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：整活向玩法</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《蛋仔派对》中一个自定义的搞笑地图玩法，角色每过一关会失去一个身体部位，主播进行连续的幽默解说和反应，并混入了非游戏素材（如表情包、电影片段），符合“游戏角色演绎完整搞笑剧情/脑洞/跨场景创意”和“把游戏素材与非游戏素材混搭出搞笑效果”的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11JxXz6Ea7" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 蛋仔派对 · 俗小天0827 · 2:00 · 2,604,294 播放</span>
+  </div>
+  <div class="title">蛋仔派对 | 什么？小天即将成功公司副总？还有机会！赶快冲刺！50万粉丝我一定可以的！ 什么？小天即将成功公司副总？ 更多蛋仔派对有趣视频持续更新中… 不想错过的话 ！就赶紧关注小天吧！ 500000粉丝！冲冲冲！！！</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：整活小剧场</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频使用《蛋仔派对》游戏角色和场景，通过口播和字幕演绎了一个关于UP主涨粉目标、公司副总挑战以及粉丝福利的剧本化故事，其中包含B站关注界面、表情包等非游戏素材混搭，明显脱离了常规单局游戏过程，符合创意整活的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11YxLzKE3b" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 屿星草欣雨 · 1:18 · 1,609,439 播放</span>
+  </div>
+  <div class="title">共享监狱已经没了，那现在是共享堵桥的时代！乌鲁鲁同志已经站出来了！</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频以游戏地图为背景，通过动画形式展示角色头像、武器和物品图标的移动与互动，并配以幽默的文字和游戏角色语音，演绎了“共享堵桥”的搞笑创意剧情，完全符合“创意整活”中“虚拟/游戏角色在虚拟世界中演绎剧情”的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV12Bs1znEYw" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 蛋仔派对 · 辉哥游戏解说 · 3:06 · 1,236,684 播放</span>
+  </div>
+  <div class="title">蛋仔派对：挑战拿蛋仔岛的钻石？不当飞贼，照样也能拿到手</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：整活小剧场</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频通过游戏角色和技能，以实验和对话的形式，演绎了如何从柯南联动区域偷取钻石的搞笑剧情。内容具有明显的创意和整活性质，非常规单局游戏过程，且有旁白讲解和角色对话，符合创意整活的定义和辅助口径。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV12JWbzvEYp" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 他们都叫我波波大人 · 3:53 · 1,009,083 播放</span>
+  </div>
+  <div class="title">别丢了最在意的人 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：创意整活</span>
+    <span class="chip focus">创意侧重点：创意整活</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频使用游戏画面作为背景，但主要角色是叠加了动物/卡通人头的游戏人物，并配以原创的、有剧情和梗的对话，讲述了一个搞笑的剧本化故事，而非单局常规游戏过程或纯粹的剪辑技巧展示。</div>
+</div></div>
+
+  <h3>两边都判「游戏实况」　<span class="cnt">共 20 条，展示 6 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11SWpzDEsD" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 王者荣耀瘦瘦吖 · 0:17 · 1,619,649 播放</span>
+  </div>
+  <div class="title">朵莉亚 我该怎么解释 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了单局游戏过程中，朵莉亚角色未给队友回血导致队友在聊天中表示困惑的搞笑瞬间，画面为连续的单局游戏过程，符合判定规程中“单局游戏过程中发生的搞笑、脑洞、玩家互动、意外事件，一律算「游戏实况」”的描述。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV19EsazoEY4" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 峡谷一绵羊 · 1:20 · 712,403 播放</span>
+  </div>
+  <div class="title">换装教学！ -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了《王者荣耀》单局游戏过程，玩家在对局中频繁打开装备商店进行装备更换，并继续战斗。视频无主播出镜、无连续讲解，主要呈现的是游戏内的实际操作和过程，符合游戏实况的定义。虽然标题提及“教学”，但内容并非结构化攻略，而是对局内行为的记录。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1FL1PBZE9t" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 青羽w · 2:52 · 1,847,605 播放</span>
+  </div>
+  <div class="title">57万满改UZI用起来是什么感觉 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主要展示了玩家在游戏中使用特定武器进行实战对局的完整过程，包括武器改装、射击训练和多段击杀，没有主播出镜或连续讲解，符合游戏实况的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1gasizeEQo" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 青羽w · 2:35 · 1,270,701 播放</span>
+  </div>
+  <div class="title">237万满改PKM用起来是什么感觉 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主要展示了玩家使用特定武器（237万满改PKM）进行游戏实战的过程，包括武器改装界面、射击训练场测试和多段实战击杀片段。视频中没有主播出镜或连续的口播讲解，主要为游戏内音效和画面，符合游戏实况的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1Jk49zBEvH" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 青羽w · 2:32 · 2,184,393 播放</span>
+  </div>
+  <div class="title">198万满改SCAR实战用起来怎么样 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频主要展示了玩家使用特定武器进行游戏的过程，包括武器改装界面和实际战斗中的表现，没有主播出镜或连续讲解，符合游戏实况的定义。虽然标题提及武器评价，但视频内容以实际操作演示为主，而非结构化测评或纯粹的武器外观展示。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1ShH4zaEsN" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · -YaLex- · 6:20 · 1,556,120 播放</span>
+  </div>
+  <div class="title">监狱5分55秒杀穿清图 专业陪/护在@UwU电竞  喔</div>
+  <div class="labels">
+    <span class="chip gt">Excel：游戏实况</span>
+    <span class="chip focus">创意侧重点：游戏实况</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频展示了完整的单局游戏过程，包含玩家之间的自然语音对话（队内交流），但没有主播出镜或连续的口播讲解，也没有直播特征。</div>
+</div></div>
+
+  <h3>两边都判「高光剪辑」　<span class="cnt">共 26 条，展示 6 条</span></h3>
+  <div class="grid"><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV11JWbzvEet" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 小禾火千 · 1:07 · 725,522 播放</span>
+  </div>
+  <div class="title">被清除的不是聊天记录 而是我们的过去 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内的击杀和精彩操作快速切换组成，伴有背景音乐和游戏内的击杀提示（如Shut Down, Rampage, Killing Spree），符合高光剪辑的定义。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV16ysEzaEWV" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 秋婷婷哦 · 1:03 · 770,744 播放</span>
+  </div>
+  <div class="title">冰女且开心 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内精彩击杀和高光操作片段快速剪辑而成，配有背景音乐和幽默的口播解说，旨在展示玩家的操作技巧和精彩瞬间。口播内容是对游戏操作的趣味性评论，而非连续的策略讲解或独立剧情演绎。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1CsHjzdEZ5" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 原味鸡蘸糖 · 1:23 · 2,115,344 播放</span>
+  </div>
+  <div class="title">他一个工程干员带狙击枪干嘛3.0 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内击杀和精彩操作的快速切换组成，伴有背景音乐和卡点效果，并有击杀提示等战绩字幕，符合高光剪辑的特征。视频中偶尔出现玩家的简短语音反应，但没有连续的讲解。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1g24FzKEjm" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 三角洲行动 · 果果bgg · 3:14 · 1,185,327 播放</span>
+  </div>
+  <div class="title">“牛逼，玻璃小炮” 呜呜呜，国庆以后玻璃大炮素材太难打了，变成玻璃小炮了@.@ 改枪码 SR-3M紧凑突击步枪-烽火地带-6HN811S095I8QK7PGN69S</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内击杀和精彩操作快速剪辑而成，伴有背景音乐和卡点效果，旨在展示玩家的精彩表现，无直播特征和连续讲解。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1hHxszvETJ" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 王者荣耀 · 千丝折纸鸾--琳 · 1:16 · 1,200,951 播放</span>
+  </div>
+  <div class="title">只攻不防 战力不详 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段《王者荣耀》游戏内的击杀和高光操作片段快速剪辑而成，配有背景音乐和游戏内的击杀提示、二连击破等战绩字幕，旨在展示玩家的精彩操作和高光时刻。视频结尾展示了MVP界面，进一步印证了高光剪辑的性质。没有直播特征、连续讲解或剧情演绎。</div>
+</div><div class="card">
+  <div class="hd">
+    <a class="vid" href="https://www.bilibili.com/video/BV1pKxkzzEdB" target="_blank" rel="noopener">▸ 打开视频</a>
+    <span class="meta">B站 · 蛋仔派对 · 小黑玩游戏ぇ · 2:07 · 842,474 播放</span>
+  </div>
+  <div class="title">&quot;蛋仔派对 -</div>
+  <div class="labels">
+    <span class="chip gt">Excel：高光剪辑</span>
+    <span class="chip focus">创意侧重点：高光剪辑</span>
+  </div>
+  <div class="reason"><b>模型依据：</b>视频由多段游戏内精彩操作快速切换组成，配有背景音乐和卡点剪辑，并有“击杀集锦”、“双重击破”、“夺冠啦”等战绩字幕，明确展示了玩家的高光时刻和操作技巧。</div>
+</div></div>
+
+
+  <h2>四、整体判定顺序（最重要）</h2>
+  <div class="ask">
+    看完上面的样本后，如果你能把这三类的判断写成一条<b>有先后顺序的规则</b>，
+    我可以直接写进提示词并用 dev/test 验证。例如：
+    <ul>
+      <li>「先看有没有脱离对局的设计（剧本/跨场景/非游戏素材）→ 有则创意整活」</li>
+      <li>「再看是否多段击杀快剪 + BGM → 是则高光剪辑」</li>
+      <li>「否则算游戏实况」</li>
+    </ul>
+    <textarea id="rule" rows="6" style="width:100%;margin-top:10px;font:inherit;font-size:13px;
+      padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);
+      color:var(--ink);resize:vertical" placeholder="在这里写你的判定顺序……"></textarea>
+  </div>
+
+  <footer>
+    生成脚本：<code>content_eval/build_boundary_compare.py</code>　·　
+    填写内容自动存在浏览器本地，刷新不会丢；填完点右下角<b>导出 JSON</b> 给我即可。
+  </footer>
+</div>
+
+<div class="bar">
+  <span class="prog">已判断 <b id="n">0</b> / 49</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <button class="btn ghost" id="jump">跳到下一条未填</button>
+  <button class="btn ghost" id="clear">清空</button>
+  <button class="btn" id="export">导出 JSON</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// 这是离线 HTML，没有后端：填写内容存在 localStorage，刷新/关页面不丢。
+// 填完点「导出 JSON」，产出的文件可被 apply_boundary_feedback.py 直接读回流水线。
+var KEY = 'boundary_feedback_v1';
+var store = {};
+try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { store = {}; }
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(store));
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.fb'));
+  var n = boxes.filter(function (b) {
+    var v = store[b.dataset.id];
+    return v && v.verdict;
+  }).length;
+  document.getElementById('n').textContent = n;
+  document.getElementById('fill').style.width = (n / boxes.length * 100) + '%';
+}
+
+function bind(box) {
+  var id = box.dataset.id;
+  var cur = store[id] || {};
+  var radios = box.querySelectorAll('input[type=radio]');
+  Array.prototype.forEach.call(radios, function (r) {
+    if (cur.verdict === r.value) r.checked = true;
+    r.addEventListener('change', function () {
+      var prev = store[id] || {};
+      prev.verdict = r.value;
+      prev.gt = box.dataset.gt;
+      prev.pred = box.dataset.pred;
+      store[id] = prev;
+      box.classList.toggle('show-other', r.value === 'neither');
+      box.closest('.card').classList.add('done');
+      save();
+    });
+  });
+  var other = box.querySelector('.fb-other');
+  var why = box.querySelector('.fb-why');
+  other.value = cur.should_be || '';
+  why.value = cur.why || '';
+  if (cur.verdict === 'neither') box.classList.add('show-other');
+  if (cur.verdict) box.closest('.card').classList.add('done');
+  other.addEventListener('input', function () {
+    var p = store[id] || {}; p.should_be = other.value; store[id] = p; save();
+  });
+  why.addEventListener('input', function () {
+    var p = store[id] || {}; p.why = why.value; store[id] = p; save();
+  });
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.fb'), bind);
+
+var ruleBox = document.getElementById('rule');
+ruleBox.value = store.__rule__ || '';
+ruleBox.addEventListener('input', function () {
+  store.__rule__ = ruleBox.value;
+  save();
+});
+
+document.getElementById('jump').addEventListener('click', function () {
+  var next = Array.prototype.slice.call(document.querySelectorAll('.fb'))
+    .filter(function (b) { var v = store[b.dataset.id]; return !(v && v.verdict); })[0];
+  if (next) next.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  else toast('全部填完了');
+});
+
+document.getElementById('clear').addEventListener('click', function () {
+  if (!confirm('确定清空所有已填内容？')) return;
+  store = {};
+  localStorage.removeItem(KEY);
+  location.reload();
+});
+
+document.getElementById('export').addEventListener('click', function () {
+  var items = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.fb'), function (b) {
+    var v = store[b.dataset.id];
+    if (!v || !v.verdict) return;
+    items.push({
+      id: b.dataset.id,
+      excel_label: b.dataset.gt,
+      model_label: b.dataset.pred,
+      verdict: v.verdict,
+      should_be: v.should_be || '',
+      why: v.why || ''
+    });
+  });
+  var out = {
+    generated: new Date().toISOString().slice(0, 10),
+    total: 49,
+    judged: items.length,
+    decision_rule: store.__rule__ || '',
+    items: items
+  };
+  var txt = JSON.stringify(out, null, 2);
+  var blob = new Blob([txt], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'boundary_feedback.json';
+  a.click();
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function () {});
+  toast('已导出 ' + items.length + ' 条（也已复制到剪贴板）');
+});
+
+save();
+</script>
+</body></html>

@@ -41,3 +41,11 @@ urls.txt
 .idea/
 *.swp
 .DS_Store
+
+# 分类流水线的下载产物与中间文件
+classification/videos*/
+classification/frames/
+classification/proxies/
+classification/out/*/items/
+classification/out/_experiments/*/
+classification/*_download.log

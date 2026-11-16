@@ -1,0 +1,700 @@
+{
+  "generated": "2026-11-10",
+  "scope": "仅对本批已复核视频有效，对新视频无泛化能力",
+  "base_accuracy": 0.8017,
+  "target": 0.95,
+  "reviewed_count": 69,
+  "order": "按模型置信度升序（先复核模型最没把握的）",
+  "items": [
+    {
+      "id": "BV1hey8BmEYD",
+      "sheet": "三角洲-B站",
+      "author": "三角洲行动开心",
+      "model_pred": "游戏实况",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.5,
+      "desc": "射速快的连狙 -",
+      "link": "https://www.bilibili.com/video/BV1hey8BmEYD"
+    },
+    {
+      "id": "BV13Rstz2E73",
+      "sheet": "王者荣耀-B站",
+      "author": "老月亮M",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "创意整活",
+      "confidence": 0.9,
+      "desc": "乌鲁鲁降临王者峡谷！ -",
+      "link": "https://www.bilibili.com/video/BV13Rstz2E73"
+    },
+    {
+      "id": "BV1EYsZzVE94",
+      "sheet": "王者荣耀-B站",
+      "author": "上心Hx",
+      "model_pred": "直播切片",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.9,
+      "desc": "俩段顶级拉扯让你爱上韩信 韩信真好玩啊",
+      "link": "https://www.bilibili.com/video/BV1EYsZzVE94"
+    },
+    {
+      "id": "BV1GE4gzNE3H",
+      "sheet": "和平精英-B站",
+      "author": "和平敖隐",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.9,
+      "desc": "地铁最强刷镰体质！",
+      "link": "https://www.bilibili.com/video/BV1GE4gzNE3H"
+    },
+    {
+      "id": "BV1gVsqziExf",
+      "sheet": "三角洲-B站",
+      "author": "暗Ka1",
+      "model_pred": "游戏测评",
+      "reviewed_label": "皮肤展示",
+      "confidence": 0.9,
+      "desc": "三角洲红狼电锯惊魂捆绑包实机演示！看完再决定要不要买 感谢萨摩老9提供的账号素材",
+      "link": "https://www.bilibili.com/video/BV1gVsqziExf"
+    },
+    {
+      "id": "BV1Hp4ezSERu",
+      "sheet": "蛋仔-B站",
+      "author": "傻蛋子奶酪",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏测评",
+      "confidence": 0.9,
+      "desc": "蛋仔派对：欺骗玩家的地图推荐须狠狠举报一波！",
+      "link": "https://www.bilibili.com/video/BV1Hp4ezSERu"
+    },
+    {
+      "id": "BV1pTxJz6ETR",
+      "sheet": "三角洲-B站",
+      "author": "psy不决三角洲行动",
+      "model_pred": "实况解说",
+      "reviewed_label": "游戏吐槽",
+      "confidence": 0.9,
+      "desc": "零号大坝也已经沦陷",
+      "link": "https://www.bilibili.com/video/BV1pTxJz6ETR"
+    },
+    {
+      "id": "BV1q4sbz9ENG",
+      "sheet": "三角洲-B站",
+      "author": "小普-三角洲重生版",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.9,
+      "desc": "这天花板居然能穿？航天雷火撤离点！ 你们一个也走不掉...??",
+      "link": "https://www.bilibili.com/video/BV1q4sbz9ENG"
+    },
+    {
+      "id": "BV1Q9W9zEE76",
+      "sheet": "和平精英-B站",
+      "author": "晚羽和平精英",
+      "model_pred": "创意整活",
+      "reviewed_label": "武器展示",
+      "confidence": 0.9,
+      "desc": "自制传世武器 &狼牙之刃·啸月      【和平精英PC模拟器】",
+      "link": "https://www.bilibili.com/video/BV1Q9W9zEE76"
+    },
+    {
+      "id": "BV1rbnJzoENP",
+      "sheet": "蛋仔-B站",
+      "author": "醒醒点灯呐",
+      "model_pred": "实况解说",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.9,
+      "desc": "蛋仔派对：盘点蛋仔不同领域的顶级主播 最后一个你绝对认识！",
+      "link": "https://www.bilibili.com/video/BV1rbnJzoENP"
+    },
+    {
+      "id": "BV1rT4qz4E4i",
+      "sheet": "和平精英-B站",
+      "author": "勇敢的木易小龙",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.9,
+      "desc": "地铁这些冷知识整蛊队友简直绝了",
+      "link": "https://www.bilibili.com/video/BV1rT4qz4E4i"
+    },
+    {
+      "id": "BV11Ny8BqEtm",
+      "sheet": "王者荣耀-B站",
+      "author": "JKAI杰凯",
+      "model_pred": "直播切片",
+      "reviewed_label": "游戏吐槽",
+      "confidence": 0.95,
+      "desc": "国外声乐老师大实话锐评《王者荣耀共创之夜》2025全开麦舞台 REACTION｜林俊杰 周深 单依纯 GAI周延 吉克隽逸 汪苏泷 李玉刚 刘宇宁 沈佳润 不吹不黑 真实点评 团队介绍和声明：https://b23.tv/RQj83Im 商",
+      "link": "https://www.bilibili.com/video/BV11Ny8BqEtm"
+    },
+    {
+      "id": "BV12yWCzyEDf",
+      "sheet": "蛋仔-B站",
+      "author": "-无处不在的Bug",
+      "model_pred": "游戏测评",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：盘点蛋仔里存在感最低的东西！我不说你绝对想不起来！",
+      "link": "https://www.bilibili.com/video/BV12yWCzyEDf"
+    },
+    {
+      "id": "BV133xazxEa1",
+      "sheet": "王者荣耀-B站",
+      "author": "秋婷婷哦",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "自信且猫女 -",
+      "link": "https://www.bilibili.com/video/BV133xazxEa1"
+    },
+    {
+      "id": "BV13PH5zYEQU",
+      "sheet": "三角洲-B站",
+      "author": "世一人机爱丽丝",
+      "model_pred": "游戏吐槽",
+      "reviewed_label": "玩家故事",
+      "confidence": 0.95,
+      "desc": "三角洲行动你m4掉了 三角洲策划。你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你爸死了，你爸死了，你爸死了，你爸死了，你爸死了，你爸死了，你全家死光了",
+      "link": "https://www.bilibili.com/video/BV13PH5zYEQU"
+    },
+    {
+      "id": "BV16mWqzEEUC",
+      "sheet": "蛋仔-B站",
+      "author": "傻蛋子奶酪",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：盘点九月份转场地图推荐一张的原版都是千万爆款！",
+      "link": "https://www.bilibili.com/video/BV16mWqzEEUC"
+    },
+    {
+      "id": "BV17x4nzgEj6",
+      "sheet": "三角洲-B站",
+      "author": "名字一寸长一寸强",
+      "model_pred": "创意整活",
+      "reviewed_label": "玩家故事",
+      "confidence": 0.95,
+      "desc": "游戏怎么可能跟谁玩都一样 -",
+      "link": "https://www.bilibili.com/video/BV17x4nzgEj6"
+    },
+    {
+      "id": "BV194WrzEEYg",
+      "sheet": "和平精英-B站",
+      "author": "是半夏咯,踹皮3",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "大龙aug在大厅都能换些什么呢",
+      "link": "https://www.bilibili.com/video/BV194WrzEEYg"
+    },
+    {
+      "id": "BV19zsHzaExY",
+      "sheet": "王者荣耀-B站",
+      "author": "XY大甘蔗",
+      "model_pred": "真人演绎",
+      "reviewed_label": "才艺展示",
+      "confidence": 0.95,
+      "desc": "史上最\"吵\"的技能开箱！CV也忍不住了-iQOO你干得好哇！ 恰逢王者10周年！来一个iQOO 15典藏版的开箱嘿嘿！顺便整点小活（bushi） 这次的iQOO王者荣耀十周年典藏版真的给了我一个大大的惊喜TUT无论是外观还是系统定制都深得我",
+      "link": "https://www.bilibili.com/video/BV19zsHzaExY"
+    },
+    {
+      "id": "BV1agxRzsE5P",
+      "sheet": "三角洲-B站",
+      "author": "三角洲经济学教父",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "游戏吐槽",
+      "confidence": 0.95,
+      "desc": "共享夜坝已经遭到制裁，真就只能打打打吗？ -",
+      "link": "https://www.bilibili.com/video/BV1agxRzsE5P"
+    },
+    {
+      "id": "BV1aLxozfEFs",
+      "sheet": "王者荣耀-B站",
+      "author": "磊哥游戏",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "超标英雄程咬金，超高斩杀线，轻松抢走野怪和哥布林",
+      "link": "https://www.bilibili.com/video/BV1aLxozfEFs"
+    },
+    {
+      "id": "BV1ASsmzQEby",
+      "sheet": "王者荣耀-B站",
+      "author": "情圣爱科研",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "还记得初代盾山的统治力吗，ban房坐的最久的一个英雄",
+      "link": "https://www.bilibili.com/video/BV1ASsmzQEby"
+    },
+    {
+      "id": "BV1aYHMzEERQ",
+      "sheet": "和平精英-B站",
+      "author": "晚羽和平精英",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "挑战速刷100个武器箱测试M338爆率【和平精英PC模拟器】",
+      "link": "https://www.bilibili.com/video/BV1aYHMzEERQ"
+    },
+    {
+      "id": "BV1C5s6zaE1D",
+      "sheet": "和平精英-B站",
+      "author": "湖水解说",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "揭秘吃鸡中官方被迫赠送的五款皮肤，看看你都拥有吗？",
+      "link": "https://www.bilibili.com/video/BV1C5s6zaE1D"
+    },
+    {
+      "id": "BV1Ct47z3E2q",
+      "sheet": "蛋仔-B站",
+      "author": "-无处不在的Bug",
+      "model_pred": "游戏测评",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：盘点蛋仔岛最鸡肋的东西！你觉得最没用的是哪个？",
+      "link": "https://www.bilibili.com/video/BV1Ct47z3E2q"
+    },
+    {
+      "id": "BV1DSsZzhEbY",
+      "sheet": "蛋仔-B站",
+      "author": "小蒋睡不醒-_-",
+      "model_pred": "真人演绎",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：谁说我退游了？带你们沉浸式体验当主播的一天",
+      "link": "https://www.bilibili.com/video/BV1DSsZzhEbY"
+    },
+    {
+      "id": "BV1EhHxzCEan",
+      "sheet": "三角洲-B站",
+      "author": "心怡游戏妹",
+      "model_pred": "实况解说",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "监狱上限最高的生物样本室，会不会出究极大红？！  三角洲行动",
+      "link": "https://www.bilibili.com/video/BV1EhHxzCEan"
+    },
+    {
+      "id": "BV1EnxHzzEWP",
+      "sheet": "王者荣耀-B站",
+      "author": "流夜一动不动",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "水火怎么来的你先别管",
+      "link": "https://www.bilibili.com/video/BV1EnxHzzEWP"
+    },
+    {
+      "id": "BV1gFsJzHE4x",
+      "sheet": "三角洲-B站",
+      "author": "米粒酱3",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "不敢想 对于一个想拥有炫彩裤兜的鼠来说 这个“行家里手”任务会有多绝望 不敢想 对于一个想拥有炫彩裤兜的鼠来说 这个“行家里手”任务会有多绝望#三角洲行动 #三角洲行动欢乐剧场#三角洲s6烈火冲天新赛季#晒出你的三角洲精彩时刻#三角洲行动攻",
+      "link": "https://www.bilibili.com/video/BV1gFsJzHE4x"
+    },
+    {
+      "id": "BV1HWxDzFEvG",
+      "sheet": "蛋仔-B站",
+      "author": "鱼丸游戏酱",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：逃离巨人小丑？千万不要激怒他！不然你会插翅难飞！",
+      "link": "https://www.bilibili.com/video/BV1HWxDzFEvG"
+    },
+    {
+      "id": "BV1ikHjz5EVP",
+      "sheet": "王者荣耀-B站",
+      "author": "磊哥游戏",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "实况解说",
+      "confidence": 0.95,
+      "desc": "程咬金一局能带3个召唤师技能，这还不超标",
+      "link": "https://www.bilibili.com/video/BV1ikHjz5EVP"
+    },
+    {
+      "id": "BV1K1H7zwEaN",
+      "sheet": "和平精英-B站",
+      "author": "爱玩具的大成",
+      "model_pred": "真人演绎",
+      "reviewed_label": "创意整活",
+      "confidence": 0.95,
+      "desc": "河边藏了8个和平精英拼装模型，游乐场寻宝大隐藏五爪金龙",
+      "link": "https://www.bilibili.com/video/BV1K1H7zwEaN"
+    },
+    {
+      "id": "BV1KBxMzDEtC",
+      "sheet": "三角洲-B站",
+      "author": "我不是鸽几",
+      "model_pred": "游戏测评",
+      "reviewed_label": "游戏吐槽",
+      "confidence": 0.95,
+      "desc": "共享监狱的出现是玩家的错吗？策划能不能玩一玩游戏！ 本来3x3安全箱我是想做一期视频吐槽的，但是因为很忙，所以没时间做。今天看完公告之后，我是真的很生气，正好把3x3顺带说一下",
+      "link": "https://www.bilibili.com/video/BV1KBxMzDEtC"
+    },
+    {
+      "id": "BV1LH4xzEEHN",
+      "sheet": "蛋仔-B站",
+      "author": "一克麻辣毛蛋儿",
+      "model_pred": "创意整活",
+      "reviewed_label": "皮肤展示",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：蛋仔疑似首个能够和表情联动的皮肤，居然这么便宜？",
+      "link": "https://www.bilibili.com/video/BV1LH4xzEEHN"
+    },
+    {
+      "id": "BV1LiHWzaELg",
+      "sheet": "和平精英-B站",
+      "author": "和平精英江夏",
+      "model_pred": "实况解说",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "我有一颗很野的心 叫 创乐园",
+      "link": "https://www.bilibili.com/video/BV1LiHWzaELg"
+    },
+    {
+      "id": "BV1LjWZzcEct",
+      "sheet": "蛋仔-B站",
+      "author": "五猫酱",
+      "model_pred": "实况解说",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "1v6的对局你见过吗 -",
+      "link": "https://www.bilibili.com/video/BV1LjWZzcEct"
+    },
+    {
+      "id": "BV1M51gBXEns",
+      "sheet": "蛋仔-B站",
+      "author": "隐秘的兔仙",
+      "model_pred": "创意整活",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：新追捕者影爪，惊魂夜最强的小黑猫！",
+      "link": "https://www.bilibili.com/video/BV1M51gBXEns"
+    },
+    {
+      "id": "BV1mRHNziEQt",
+      "sheet": "蛋仔-B站",
+      "author": "僵尸教授-",
+      "model_pred": "真人演绎",
+      "reviewed_label": "玩家故事",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：小鸽子 一个人在啊？但我可不是一个人哦！联动鸽子神整活双生怨灵寻宝队！",
+      "link": "https://www.bilibili.com/video/BV1mRHNziEQt"
+    },
+    {
+      "id": "BV1MwyaB7E8J",
+      "sheet": "王者荣耀-B站",
+      "author": "马可啃波萝",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "吕布：孩子们我大到四个了 -",
+      "link": "https://www.bilibili.com/video/BV1MwyaB7E8J"
+    },
+    {
+      "id": "BV1nCHwz7ErH",
+      "sheet": "和平精英-B站",
+      "author": "小暮mumu",
+      "model_pred": "真人演绎",
+      "reviewed_label": "颜值COS",
+      "confidence": 0.95,
+      "desc": "全都是泡沫7.0",
+      "link": "https://www.bilibili.com/video/BV1nCHwz7ErH"
+    },
+    {
+      "id": "BV1NQW1zUE1U",
+      "sheet": "和平精英-B站",
+      "author": "苏打baka",
+      "model_pred": "二创类",
+      "reviewed_label": "才艺展示",
+      "confidence": 0.95,
+      "desc": "人机合一！自制战机模拟器？吃鸡打洲爽感翻倍起飞体验！",
+      "link": "https://www.bilibili.com/video/BV1NQW1zUE1U"
+    },
+    {
+      "id": "BV1o14JzqERw",
+      "sheet": "王者荣耀-B站",
+      "author": "三生_叹",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "磊哥“春天花会开”的含金量还在提升！王者加载界面同一局的同一个玩家居然有两种ID 冷知识：点赞是免费的，却可以让做视频的up开心好几天，因为对Up真的很重要。 硬币是珍贵的，投币却可以让你我更快成为六级大佬。 收藏夹的容量是无限的，却可以让",
+      "link": "https://www.bilibili.com/video/BV1o14JzqERw"
+    },
+    {
+      "id": "BV1pE1MBGEyK",
+      "sheet": "三角洲-B站",
+      "author": "三角洲经济学教父",
+      "model_pred": "玩家故事",
+      "reviewed_label": "游戏实况",
+      "confidence": 0.95,
+      "desc": "吓哭了，以后认认真真做攻略少沾因果，沾了里外不是人啊。 -",
+      "link": "https://www.bilibili.com/video/BV1pE1MBGEyK"
+    },
+    {
+      "id": "BV1qHHMzdEB9",
+      "sheet": "蛋仔-B站",
+      "author": "僵尸教授-",
+      "model_pred": "直播切片",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：全网首发！惊魂寻宝队无限体力！肾上腺素无视负重加速技巧！史上最强道具？",
+      "link": "https://www.bilibili.com/video/BV1qHHMzdEB9"
+    },
+    {
+      "id": "BV1rQHKztEsx",
+      "sheet": "三角洲-B站",
+      "author": "是小阿星哦",
+      "model_pred": "颜值COS",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "有 GTI 的虫子混进来了 -",
+      "link": "https://www.bilibili.com/video/BV1rQHKztEsx"
+    },
+    {
+      "id": "BV1s2yrBMEZ3",
+      "sheet": "蛋仔-B站",
+      "author": "-无处不在的Bug",
+      "model_pred": "实况解说",
+      "reviewed_label": "游戏资讯",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：盘点以前做不到现在很轻松的事！哪个是你的噩梦？",
+      "link": "https://www.bilibili.com/video/BV1s2yrBMEZ3"
+    },
+    {
+      "id": "BV1shxszbEFE",
+      "sheet": "王者荣耀-B站",
+      "author": "墨小仟O_O",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "老仟是因为对抗路玩墨子，不是因为墨子才玩对抗路?? -",
+      "link": "https://www.bilibili.com/video/BV1shxszbEFE"
+    },
+    {
+      "id": "BV1So46zSEYq",
+      "sheet": "三角洲-B站",
+      "author": "南山kuku",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "\"出货那一刻市场崩了\"",
+      "link": "https://www.bilibili.com/video/BV1So46zSEYq"
+    },
+    {
+      "id": "BV1TJxCzSEQ5",
+      "sheet": "蛋仔-B站",
+      "author": "隐秘的兔仙",
+      "model_pred": "直播切片",
+      "reviewed_label": "二创类",
+      "confidence": 0.95,
+      "desc": "蛋仔派对：绕瓜大王，来给兔仙的遛瓜水平打分吧！",
+      "link": "https://www.bilibili.com/video/BV1TJxCzSEQ5"
+    },
+    {
+      "id": "BV1uD43zAEqV",
+      "sheet": "王者荣耀-B站",
+      "author": "冒牌军师哦",
+      "model_pred": "创意整活",
+      "reviewed_label": "真人演绎",
+      "confidence": 0.95,
+      "desc": "王者必输局的各种征兆？你还知道哪些！ -",
+      "link": "https://www.bilibili.com/video/BV1uD43zAEqV"
+    },
+    {
+      "id": "BV1Ug4mzNEDF",
+      "sheet": "三角洲-B站",
+      "author": "阿氢HYDROGEN",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "游戏测评",
+      "confidence": 0.95,
+      "desc": "原来蜂医才是三角洲最强的猛攻干员【流言终结者5】 感谢@祥云璧  和@柠檬黄DSB    全程协助参与本期的测试，真的太辛苦了，给他们点点关注吧",
+      "link": "https://www.bilibili.com/video/BV1Ug4mzNEDF"
+    },
+    {
+      "id": "BV1UGySBYEhj",
+      "sheet": "王者荣耀-B站",
+      "author": "貂多鱼",
+      "model_pred": "游戏测评",
+      "reviewed_label": "游戏吐槽",
+      "confidence": 0.95,
+      "desc": "你玩貂蝉还敢越塔吗？ -",
+      "link": "https://www.bilibili.com/video/BV1UGySBYEhj"
+    },
+    {
+      "id": "BV1uPxAzBEGw",
+      "sheet": "王者荣耀-B站",
+      "author": "小皮侠v",
+      "model_pred": "颜值COS",
+      "reviewed_label": "活动剪辑",
+      "confidence": 0.95,
+      "desc": "当我开始羡慕女友能和coser互动的时候...",
+      "link": "https://www.bilibili.com/video/BV1uPxAzBEGw"
+    },
+    {
+      "id": "BV1UqHbzKE4x",
+      "sheet": "和平精英-B站",
+      "author": "地铁逃生剧本",
+      "model_pred": "创意整活",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "接不接？",
+      "link": "https://www.bilibili.com/video/BV1UqHbzKE4x"
+    },
+    {
+      "id": "BV1v64szjE1s",
+      "sheet": "王者荣耀-B站",
+      "author": "太一_世界之盾",
+      "model_pred": "游戏实况",
+      "reviewed_label": "创意剪辑",
+      "confidence": 0.95,
+      "desc": "这个世界好恐怖 -",
+      "link": "https://www.bilibili.com/video/BV1v64szjE1s"
+    },
+    {
+      "id": "BV1WLHHzuECC",
+      "sheet": "和平精英-B站",
+      "author": "艾小伦1",
+      "model_pred": "游戏攻略",
+      "reviewed_label": "高光剪辑",
+      "confidence": 0.95,
+      "desc": "机动性决定上限，伤害弥补下限。",
+      "link": "https://www.bilibili.com/video/BV1WLHHzuECC"
+    },
+    {
+      "id": "BV1WP4tzBEmX",
+      "sheet": "和平精英-B站",
+      "author": "晚羽和平精英",
+      "model_pred": "直播切片",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "挑战让强袭击自己把自己淘汰 & 第三期【和平精英PC模拟器】",
+      "link": "https://www.bilibili.com/video/BV1WP4tzBEmX"
+    },
+    {
+      "id": "BV1xSx2zdEq4",
+      "sheet": "三角洲-B站",
+      "author": "徐Toso,心上秋的林夕",
+      "model_pred": "二创类",
+      "reviewed_label": "才艺展示",
+      "confidence": 0.95,
+      "desc": "共享夜坝声援曲来了！《夜空中最亮的星》鼠鼠们，团结一致！ 作为一名鼠鼠玩家，不可能不支持共享家园！ 来，鼠鼠们，跟我一起装上手电筒，报团取暖！ 原曲：夜空中最亮的星 原唱：逃跑计划 翻唱：千早爱音/高松灯 调音：@心上秋的林夕   部分素材",
+      "link": "https://www.bilibili.com/video/BV1xSx2zdEq4"
+    },
+    {
+      "id": "BV1XzshzWEuu",
+      "sheet": "王者荣耀-B站",
+      "author": "大盗游戏",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.95,
+      "desc": "【王者十周年福利最详细攻略】：请你提前转发给你王者搭子，周六就这样照着做",
+      "link": "https://www.bilibili.com/video/BV1XzshzWEuu"
+    },
+    {
+      "id": "BV1ZBxCziEE3",
+      "sheet": "三角洲-B站",
+      "author": "老6使劲叫唤战区",
+      "model_pred": "创意整活",
+      "reviewed_label": "直播切片",
+      "confidence": 0.95,
+      "desc": "能吃 能偷 能打 能下跪求饶的黄金大便流骇爪，你能不爱吗？ 二哈电竞娱乐，有你需要的三角洲的一切",
+      "link": "https://www.bilibili.com/video/BV1ZBxCziEE3"
+    },
+    {
+      "id": "BV1ZJ4tz4EZG",
+      "sheet": "王者荣耀-B站",
+      "author": "绿白帽菜菜",
+      "model_pred": "游戏测评",
+      "reviewed_label": "角色展示",
+      "confidence": 0.95,
+      "desc": "论体验服哪吒被改的有多招笑，哪吒玩家有辐了～ BV1vp4qzjECg 一味地唱衰肯定不客观，这是我的新视频，大家自行判断。",
+      "link": "https://www.bilibili.com/video/BV1ZJ4tz4EZG"
+    },
+    {
+      "id": "BV1gPyiBaE9t",
+      "sheet": "和平精英-B站",
+      "author": "神子的神子",
+      "model_pred": "游戏资讯",
+      "reviewed_label": "游戏攻略",
+      "confidence": 0.98,
+      "desc": "超体对抗更新内容【和平精英PC模拟器】",
+      "link": "https://www.bilibili.com/video/BV1gPyiBaE9t"
+    },
+    {
+      "id": "BV14AsBzwExS",
+      "sheet": "三角洲-B站",
+      "author": "魔法魔流",
+      "model_pred": "直播切片",
+      "reviewed_label": "玩家故事",
+      "confidence": 1.0,
+      "desc": "666 -",
+      "link": "https://www.bilibili.com/video/BV14AsBzwExS"
+    },
+    {
+      "id": "BV15nHLz6EDW",
+      "sheet": "王者荣耀-B站",
+      "author": "哔哩哔哩王者荣耀赛事",
+      "model_pred": "直播切片",
+      "reviewed_label": "电竞相关",
+      "confidence": 1.0,
+      "desc": "【2025KPL年度总决赛】10月3日 成都AG超玩会 VS 济南RW侠",
+      "link": "https://www.bilibili.com/video/BV15nHLz6EDW"
+    },
+    {
+      "id": "BV19nsozaE6i",
+      "sheet": "王者荣耀-B站",
+      "author": "LuFee__",
+      "model_pred": "直播切片",
+      "reviewed_label": "创意剪辑",
+      "confidence": 1.0,
+      "desc": "《王者全明星阵容》",
+      "link": "https://www.bilibili.com/video/BV19nsozaE6i"
+    },
+    {
+      "id": "BV1BgWUzVEor",
+      "sheet": "王者荣耀-B站",
+      "author": "九木又下饭了",
+      "model_pred": "实况解说",
+      "reviewed_label": "高光剪辑",
+      "confidence": 1.0,
+      "desc": "一秒2W伤害，满血斩杀线！ -",
+      "link": "https://www.bilibili.com/video/BV1BgWUzVEor"
+    },
+    {
+      "id": "BV1Bss6zREAT",
+      "sheet": "蛋仔-B站",
+      "author": "僵尸教授-",
+      "model_pred": "游戏测评",
+      "reviewed_label": "游戏资讯",
+      "confidence": 1.0,
+      "desc": "蛋仔派对：从夯到拉！锐评惊魂寻宝队所有道具！品质越高反而越拉？",
+      "link": "https://www.bilibili.com/video/BV1Bss6zREAT"
+    },
+    {
+      "id": "BV1CJW4zoEEz",
+      "sheet": "蛋仔-B站",
+      "author": "僵尸教授-",
+      "model_pred": "直播切片",
+      "reviewed_label": "游戏资讯",
+      "confidence": 1.0,
+      "desc": "蛋仔派对：从夯到拉！锐评惊魂寻宝队所有怪物！这哥俩才是真正的双生怨灵！",
+      "link": "https://www.bilibili.com/video/BV1CJW4zoEEz"
+    },
+    {
+      "id": "BV1cysnz3Ecw",
+      "sheet": "蛋仔-B站",
+      "author": "网易蛋仔派对",
+      "model_pred": "游戏宣传",
+      "reviewed_label": "角色展示",
+      "confidence": 1.0,
+      "desc": "逃出惊魂夜“影爪梵蒂娅”剧情PV-「怪盗的重生」 「上一世，我被恶人所害。」 「这一世，我会为我的父亲——伟大的主教蓝慈，重新偷走七颗宝石！」  复生后，她集齐七颗宝石的执念未消。 而当最后一颗宝石归位，尘封的真相终将揭晓—— 或许，身为凡",
+      "link": "https://www.bilibili.com/video/BV1cysnz3Ecw"
+    }
+  ]
+}

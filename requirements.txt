@@ -10,3 +10,7 @@ openpyxl>=3.1.0
 
 # 抖音 api 模式 / TikTok 需要配合 TikTokDownloader 仓库，
 # 届时请按该仓库的 requirements 安装（本项目默认通路无需这些依赖）
+
+# 内容分类流水线（classification/）：文本先验用的 TF-IDF + 逻辑回归
+scikit-learn>=1.5.0
+numpy>=1.26.0

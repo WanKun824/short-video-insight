@@ -1,0 +1,122 @@
+
+  <footer style="color:var(--muted);font-size:12px;margin-top:40px">
+    生成脚本：<code>content_eval/build_pair_review.py</code>　·　
+    选择自动存在浏览器本地，刷新不丢；填完点右下角<b>导出 JSON</b> 给我，
+    我用 <code>apply_pair_feedback.py</code> 写回评测口径。
+  </footer>
+</div>
+
+<div class="bar">
+  <span class="prog">已判定 <b id="n">0</b> / __TOTAL__</span>
+  <span class="est">按当前选择：<b id="est">__BASEN__/__N__</b></span>
+  <button class="btn ghost" id="jump">下一个未判</button>
+  <button class="btn ghost" id="clear">清空</button>
+  <button class="btn" id="export">导出 JSON</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var KEY = 'pair_review_v1';
+var BASE_N = __BASEN__, TOTAL_N = __N__;
+var store = {};
+try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { store = {}; }
+
+function toast(m) {
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(store));
+  var pairs = Array.prototype.slice.call(document.querySelectorAll('.pair'));
+  var judged = 0, gain = 0;
+  pairs.forEach(function (p) {
+    var k = p.dataset.a + '__' + p.dataset.b;
+    var v = store[k];
+    if (v && v.verdict) {
+      judged++;
+      if (v.verdict === 'yes') gain += parseInt(p.dataset.gain, 10);
+      p.classList.add('done');
+    } else {
+      p.classList.remove('done');
+    }
+  });
+  document.getElementById('n').textContent = judged;
+  var acc = (BASE_N + gain) / TOTAL_N;
+  document.getElementById('est').textContent =
+    (BASE_N + gain) + '/' + TOTAL_N + ' = ' + (acc * 100).toFixed(2) + '%';
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.pair'), function (p) {
+  var k = p.dataset.a + '__' + p.dataset.b;
+  var cur = store[k] || {};
+  Array.prototype.forEach.call(p.querySelectorAll('input[type=radio]'), function (r) {
+    if (cur.verdict === r.value) r.checked = true;
+    r.addEventListener('change', function () {
+      var prev = store[k] || {};
+      prev.verdict = r.value;
+      prev.a = p.dataset.a; prev.b = p.dataset.b;
+      prev.gain = parseInt(p.dataset.gain, 10);
+      store[k] = prev;
+      save();
+    });
+  });
+  var why = p.querySelector('.fb-why');
+  why.value = cur.why || '';
+  why.addEventListener('input', function () {
+    var prev = store[k] || {}; prev.why = why.value; store[k] = prev; save();
+  });
+});
+
+document.getElementById('jump').addEventListener('click', function () {
+  var next = Array.prototype.slice.call(document.querySelectorAll('.pair'))
+    .filter(function (p) {
+      var v = store[p.dataset.a + '__' + p.dataset.b];
+      return !(v && v.verdict);
+    })[0];
+  if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  else toast('全部判完了');
+});
+
+document.getElementById('clear').addEventListener('click', function () {
+  if (!confirm('确定清空？')) return;
+  store = {}; localStorage.removeItem(KEY); location.reload();
+});
+
+document.getElementById('export').addEventListener('click', function () {
+  var accept = [], reject = [], later = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.pair'), function (p) {
+    var k = p.dataset.a + '__' + p.dataset.b;
+    var v = store[k];
+    if (!v || !v.verdict) return;
+    var rec = { a: p.dataset.a, b: p.dataset.b,
+                gain: parseInt(p.dataset.gain, 10), why: v.why || '' };
+    if (v.verdict === 'yes') accept.push(rec);
+    else if (v.verdict === 'no') reject.push(rec);
+    else later.push(rec);
+  });
+  var gain = accept.reduce(function (s, r) { return s + r.gain; }, 0);
+  var out = {
+    generated: new Date().toISOString().slice(0, 10),
+    total_candidates: __TOTAL__,
+    judged: accept.length + reject.length + later.length,
+    base: { correct: BASE_N, total: TOTAL_N },
+    estimated: { correct: BASE_N + gain, total: TOTAL_N,
+                 accuracy: +((BASE_N + gain) / TOTAL_N).toFixed(4) },
+    accept: accept, reject: reject, later: later
+  };
+  var txt = JSON.stringify(out, null, 2);
+  var blob = new Blob([txt], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pair_review.json';
+  a.click();
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function () {});
+  toast('已导出：采纳 ' + accept.length + ' / 拒绝 ' + reject.length +
+        ' / 待议 ' + later.length);
+});
+
+save();
+</script>
+</body></html>

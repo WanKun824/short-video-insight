@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v4 B站 评测 · 跨平台对比</title>
+<style>
+  :root { --bg:#f7f8fa; --panel:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+    --gt:#b91c1c; --pred:#1d4ed8; --accent:#0f766e; --ok:#047857;
+    --warn:#b45309; --warnbg:#fef3c7; --v4:#7c3aed; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0b0f14; --panel:#131a22; --ink:#e5e7eb; --muted:#9ca3af; --line:#263241;
+      --warnbg:#3b2f0b; --warn:#fcd34d; --ok:#6ee7b7; --v4:#a78bfa; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.7;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1020px; margin:0 auto; padding:40px 20px 70px; }
+  h1 { font-size:28px; margin:0 0 6px; }
+  h2 { font-size:20px; margin:42px 0 12px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+  h3 { font-size:15px; margin:22px 0 8px; }
+  .sub { color:var(--muted); margin:0 0 24px; }
+  .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:22px 0; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .stat .num { font-size:28px; font-weight:700; color:var(--accent); line-height:1.2; }
+  .stat .lbl { font-size:13px; color:var(--muted); }
+  .stat .note { font-size:12px; color:var(--muted); margin-top:6px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .muted { color:var(--muted); } .pos { color:var(--ok); font-weight:600; }
+  .neg { color:var(--gt); font-weight:600; }
+  code { background:var(--line); padding:1px 5px; border-radius:4px; font-size:13px; }
+  .chip { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; }
+  .chip.ok { background:rgba(4,120,87,.14); color:var(--ok); }
+  .alert { background:var(--warnbg); color:var(--warn); border:1px solid var(--warn);
+    border-radius:12px; padding:14px 18px; margin:14px 0; font-size:14px; }
+  .fail { background:rgba(185,28,28,.08); border:1px solid var(--gt); border-radius:12px;
+    padding:14px 18px; margin:14px 0; font-size:14px; }
+  .fail b { color:var(--gt); }
+  svg text.lbl { font-size:12.5px; fill:var(--ink); }
+  svg text.axis { font-size:11px; fill:var(--muted); }
+  svg text.val { font-size:12px; fill:var(--ink); font-variant-numeric:tabular-nums; }
+  svg line.grid { stroke:var(--line); }
+  svg .bar-v3 { fill:var(--accent); } svg .bar-v4 { fill:var(--v4); }
+  svg .bar-base { fill:var(--muted); opacity:.5; }
+  footer { color:var(--muted); font-size:12px; margin-top:46px; }
+
+  /* ---- 错误案例卡片 ---- */
+  .ecards { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:10px; }
+  .ecard { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; }
+  .ehd { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:7px; }
+  .ehd .arrow { color:var(--muted); font-size:13px; }
+  .emeta { font-size:11px; color:var(--muted); width:100%; margin-top:2px; }
+  .etitle { font-size:13px; margin:5px 0 7px; }
+  .ersn { font-size:11.5px; color:var(--muted);
+    border-top:1px dashed var(--line); padding-top:7px; }
+  .chip.gt { background:var(--gtbg,rgba(185,28,28,.12)); color:var(--gt); font-weight:600; }
+  .chip.pred { background:var(--predbg,rgba(29,78,216,.12)); color:var(--pred); font-weight:600; }
+  a.vid { color:var(--accent); text-decoration:none; font-size:11.5px; white-space:nowrap;
+    border:1px solid var(--accent); padding:2px 8px; border-radius:6px; font-weight:600;
+    margin-left:auto; }
+  a.vid:hover { background:var(--accent); color:#fff; }
+  @media (max-width:760px) { .cards { grid-template-columns:repeat(2,1fr); } }
+</style></head><body><div class="wrap">
+  <h1>v4 B站 评测 · 跨平台对比</h1>
+  <p class="sub">10月TOP500内容分类.xlsx · B站 4 个工作表 1880 条中分层抽样 500 条 ·
+     模型 gemini-2.5-flash · 24 类标签 · 2026-11-16</p>
+
+  <div class="cards">
+    <div class="stat"><div class="num">94.6%</div><div class="lbl">B站 准确率</div>
+      <div class="note">464 条，业务口径</div></div>
+    <div class="stat"><div class="num">90.4%</div><div class="lbl">抖音/快手 准确率</div>
+      <div class="note">446 条，<b>同口径</b></div></div>
+    <div class="stat"><div class="num">25</div><div class="lbl">剩余错误</div>
+      <div class="note">已按成因分 4 类，见评测报告第五节</div></div>
+    <div class="stat"><div class="num">468</div><div class="lbl">下载成功</div>
+      <div class="note">500 条中，失败 32 条</div></div>
+  </div>
+
+  <h2>一、B站 vs 抖音/快手（同口径）</h2>
+  <p class="sub">两边都用 31 组豁免对，可直接比较。</p>
+  <div class="panel"><svg viewBox="0 0 760 124" width="100%">
+<line x1="180" y1="24" x2="180" y2="108" class="grid"/>
+<text x="180" y="16" class="axis" text-anchor="middle">0%</text>
+<line x1="298" y1="24" x2="298" y2="108" class="grid"/>
+<text x="298" y="16" class="axis" text-anchor="middle">25%</text>
+<line x1="415" y1="24" x2="415" y2="108" class="grid"/>
+<text x="415" y="16" class="axis" text-anchor="middle">50%</text>
+<line x1="532" y1="24" x2="532" y2="108" class="grid"/>
+<text x="532" y="16" class="axis" text-anchor="middle">75%</text>
+<line x1="650" y1="24" x2="650" y2="108" class="grid"/>
+<text x="650" y="16" class="axis" text-anchor="middle">100%</text>
+<text x="170" y="45" class="lbl" text-anchor="end">抖音/快手</text>
+<rect x="180" y="30" width="425" height="20" rx="3" class="bar-v3"/>
+<text x="613" y="45" class="val">90.4% <tspan class="axis">446 条</tspan></text>
+<text x="170" y="87" class="lbl" text-anchor="end">B站</text>
+<rect x="180" y="72" width="445" height="20" rx="3" class="bar-v4"/>
+<text x="633" y="87" class="val">94.6% <tspan class="axis">464 条</tspan></text>
+</svg></div>
+  <div class="panel" style="overflow-x:auto">
+    <table>
+      <tr><th>口径</th><th class="num">抖音/快手</th><th class="num">B站</th><th>说明</th></tr>
+      <tr><td>4 组豁免对</td><td class="num muted">78.03%</td>
+          <td class="num muted">66.81%</td>
+          <td>v3 最初的口径</td></tr>
+      <tr><td>31 组豁免对</td><td class="num"><b>90.36%</b></td>
+          <td class="num"><b>94.61%</b></td>
+          <td><b>当前口径，两边可比</b></td></tr>
+      <tr><td>+ 逐条人工复核</td><td class="num"><b>95.07%</b></td>
+          <td class="num"><b>95.04%</b></td>
+          <td>仅本批有效，对新数据零泛化</td></tr>
+    </table>
+  </div>
+  <div class="alert">
+    <b>31 组豁免对里有 22 组是批量采纳的（未逐条核对样本）。</b>
+    若只计有逐条依据的豁免，B站 是 <b>80.17%</b>。<br>
+    批量采纳的 22 组里有 4 组语义距离较远
+    （<code>二创类／才艺展示</code>、<code>创意剪辑／颜值COS</code>、
+    <code>游戏吐槽／直播切片</code>、<code>创意整活／皮肤展示</code>），
+    被追问口径时建议用这个数。
+  </div>
+
+  <h3>B站 的数据形态差异</h3>
+  <p class="sub">同口径下 B站 (94.6%) 高于抖音/快手 (90.4%)，
+     但这不代表 B站 更简单——下面几项让 B站 的<b>纯文本线索几乎不可用</b>，
+     同时也意味着 v3 的话题规则层无法复用。</p>
+  <div class="panel"><table>
+    <tr><th>维度</th><th class="num">抖音/快手</th><th class="num">B站</th><th>影响</th></tr>
+    <tr><td>描述长度（中位）</td><td class="num">56 字</td><td class="num">21 字</td>
+        <td>B站 只有一句标题，文本信息量少</td></tr>
+    <tr><td>无话题标签占比</td><td class="num">0%</td>
+        <td class="num"><b>97%</b></td>
+        <td><b>话题规则层在 B站 完全失效</b>（挖出 0 条规则）</td></tr>
+    <tr><td>作者数量</td><td class="num">—</td><td class="num">335 个</td>
+        <td>500 条分散在 335 个 UP 主，最多的只有 8 条，作者规则也难成立</td></tr>
+    <tr><td>文本先验 top1</td><td class="num">59.9%</td><td class="num"><b>40.8%</b></td>
+        <td>纯文本几乎预测不了，必须靠画面</td></tr>
+  </table></div>
+
+  <h2>二、B站 专用提示词（bili_v11）</h2>
+  <div class="panel"><svg viewBox="0 0 760 124" width="100%">
+<line x1="180" y1="24" x2="180" y2="108" class="grid"/>
+<text x="180" y="16" class="axis" text-anchor="middle">0%</text>
+<line x1="298" y1="24" x2="298" y2="108" class="grid"/>
+<text x="298" y="16" class="axis" text-anchor="middle">25%</text>
+<line x1="415" y1="24" x2="415" y2="108" class="grid"/>
+<text x="415" y="16" class="axis" text-anchor="middle">50%</text>
+<line x1="532" y1="24" x2="532" y2="108" class="grid"/>
+<text x="532" y="16" class="axis" text-anchor="middle">75%</text>
+<line x1="650" y1="24" x2="650" y2="108" class="grid"/>
+<text x="650" y="16" class="axis" text-anchor="middle">100%</text>
+<text x="170" y="45" class="lbl" text-anchor="end">基线（v3 的提示词直接用）</text>
+<rect x="180" y="30" width="425" height="20" rx="3" class="bar-base"/>
+<text x="613" y="45" class="val">90.5%</text>
+<text x="170" y="87" class="lbl" text-anchor="end">bili_v11（B站 专用）</text>
+<rect x="180" y="72" width="445" height="20" rx="3" class="bar-v4"/>
+<text x="633" y="87" class="val">94.6% <tspan class="axis">+4.1pp</tspan></text>
+</svg></div>
+  <p class="sub">同 464 条样本公平对比：基线 90.52% → bili_v11 94.61%</p>
+  <div class="panel" style="overflow-x:auto"><table>
+    <tr><th>工作表</th><th>游戏</th><th class="num">样本</th><th class="num">基线</th><th class="num">bili_v11</th><th class="num">变化</th></tr>
+    <tr><td>三角洲-B站</td><td>三角洲行动</td><td class="num">118</td><td class="num muted">87.3%</td><td class="num"><b>93.2%</b></td><td class="num pos">+5.9pp</td></tr><tr><td>和平精英-B站</td><td>和平精英</td><td class="num">106</td><td class="num muted">92.5%</td><td class="num"><b>96.2%</b></td><td class="num pos">+3.8pp</td></tr><tr><td>王者荣耀-B站</td><td>王者荣耀</td><td class="num">112</td><td class="num muted">86.6%</td><td class="num"><b>92.9%</b></td><td class="num pos">+6.2pp</td></tr><tr><td>蛋仔-B站</td><td>蛋仔派对</td><td class="num">128</td><td class="num muted">95.3%</td><td class="num"><b>96.1%</b></td><td class="num pos">+0.8pp</td></tr>
+  </table></div>
+  <h3>v11 相对 generic_v8 加了什么</h3>
+  <div class="panel"><table>
+    <tr><th>改动</th><th>依据</th></tr>
+    <tr><td>B站 场景说明：描述短、无标签，判断以画面为主</td>
+        <td>实测 97% 无话题标签，描述中位仅 21 字</td></tr>
+    <tr><td>提醒视频较长，开头常是片头/前情提要</td>
+        <td>中位 163 秒，65% 超过 120 秒（代理只覆盖前 120 秒）</td></tr>
+    <tr><td>细化「创意剪辑 vs 创意整活」「高光剪辑 vs 创意剪辑」边界</td>
+        <td>创意剪辑在 B站 是常见类（106 条），但基线召回 1/25</td></tr>
+  </table></div>
+
+  <h2>三、剩余错误案例（25 条）</h2>
+  <p class="sub">25 条错误分布在 25 个不同的混淆方向上，再加豁免对每组只能救 1 条。
+     按<b>成因</b>分组后，其中 12 条是可行动的。</p>
+  <div class="panel" style="overflow-x:auto"><table>
+    <tr><th>成因</th><th class="num">条数</th><th>能不能修</th></tr>
+    <tr><td>真人出镜盖掉了更贴切的类</td><td class="num">8</td><td><b>可以修</b>：要求「真人是主要看点」才判，而不是「出现真人」就判</td></tr><tr><td>内容确实横跨两类</td><td class="num">10</td><td><b>需要定口径</b>：业务方决定「吐槽 vs 攻略」「测评 vs 整活」谁优先</td></tr><tr><td>长视频只看了前段</td><td class="num">3</td><td><b>技术限制</b>：全片抽帧已验证是负收益（−3.2pp）</td></tr><tr><td>模型判法更符合 24 类定义</td><td class="num">4</td><td><b>建议改 Excel</b></td></tr>
+  </table></div>
+
+  <h3>真人出镜盖掉了更贴切的类（8 条）</h3>
+  <p class="sub">判定规程里真人出镜优先级最高，一出现真人/手部/摄像头小窗，「真人演绎」「直播切片」就会盖掉更贴切的类　—　<b>可以修</b>：要求「真人是主要看点」才判，而不是「出现真人」就判</p>
+  <div class="ecards">
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">玩家故事</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">直播切片</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV14AsBzwExS" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 0:36 · 侧重点：玩家故事</span>
+        </div>
+        <div class="etitle">666 -</div>
+        <div class="ersn">模型依据：视频中出现真人（手部）出镜，正在进行游戏内的抽奖或揭示操作，并伴随激动的实时语音反应，符合直播切片的特征。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">实况解说</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">真人演绎</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1oKHnzsEqU" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">和平精英 · 5:56 · 侧重点：地铁逃生</span>
+        </div>
+        <div class="etitle">难言：当难言线下扶贫武子弈，没想到房间有秘密</div>
+        <div class="ersn">模型依据：视频主体是两位真人（难言和武子弈）在现实世界中进行互动，包括难言前往武子弈家、送营养品、查看游戏账号、一起玩游戏等，有明确的剧情线和对话，符合真人演绎的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">剧情解读</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">直播切片</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1hgxuzZENn" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 4:49 · 侧重点：剧情解读</span>
+        </div>
+        <div class="etitle">十年未尝一败，cg概念神李白！ -</div>
+        <div class="ersn">模型依据：视频在 01:30 左右出现主播摄像头小窗，主播本人出镜并对游戏CG画面进行实时反应和解说，符合直播特征。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">活动剪辑</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">颜值COS</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1uPxAzBEGw" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 0:14 · 侧重点：漫展vlog</span>
+        </div>
+        <div class="etitle">当我开始羡慕女友能和coser互动的时候...</div>
+        <div class="ersn">模型依据：视频前半段展示女友与游戏coser互动，后半段创作者本人变装成游戏角色coser，并与另一位coser进行互动，核心内容是真人cosplay的展示和互动。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏实况</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">直播切片</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1TXHWzDELq" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 1:00 · 侧重点：游戏实况</span>
+        </div>
+        <div class="etitle">九年了，马可还是没守住 -</div>
+        <div class="ersn">模型依据：视频画面上方有游戏直播画面，且右上角有主播摄像头小窗（画中画），符合直播特征。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">二创类</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">直播切片</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1TJxCzSEQ5" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">蛋仔派对 · 2:03 · 侧重点：绘画二创</span>
+        </div>
+        <div class="etitle">蛋仔派对：绕瓜大王，来给兔仙的遛瓜水平打分吧！</div>
+        <div class="ersn">模型依据：视频中出现模拟直播的聊天框（粉丝评论）并有主播（配音）互动，同时有常驻的动画主播形象作为画中画，符合直播特征。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">创意剪辑</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">真人演绎</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1DSsZzhEbY" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">蛋仔派对 · 4:18 · 侧重点：Vlog</span>
+        </div>
+        <div class="etitle">蛋仔派对：谁说我退游了？带你们沉浸式体验当主播的一天</div>
+        <div class="ersn">模型依据：视频为真人出镜，以vlog形式演绎主播一天的生活，包含起床、工作、吃饭、录制游戏素材等多个场景，有台词和情节设计，具有喜剧效果，符合真人演绎的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">玩家故事</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">真人演绎</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1mRHNziEQt" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">蛋仔派对 · 0:32 · 侧重点：玩家故事</span>
+        </div>
+        <div class="etitle">蛋仔派对：小鸽子 一个人在啊？但我可不是一个人哦！联动鸽子神整活双生怨灵寻宝队！</div>
+        <div class="ersn">模型依据：视频中真人出镜，通过对话和表演演绎了一个关于为游戏角色（双生怨灵）进行女装cosplay并预告游戏联动活动的幽默短剧，具有明确的角色、台词和情节，符合真人演绎的定义。</div>
+      </div></div>
+
+  <h3>内容确实横跨两类（10 条）</h3>
+  <p class="sub">同一条视频既是 A 也是 B，Excel 按主观侧重打标　—　<b>需要定口径</b>：业务方决定「吐槽 vs 攻略」「测评 vs 整活」谁优先</p>
+  <div class="ecards">
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏吐槽</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏攻略</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1agxRzsE5P" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 2:09 · 侧重点：游戏吐槽</span>
+        </div>
+        <div class="etitle">共享夜坝已经遭到制裁，真就只能打打打吗？ -</div>
+        <div class="ersn">模型依据：视频中主播在游戏大厅界面，口播讲解了游戏内“共享夜坝”模式中关于“非法抱团”的判定机制，并提供了避免被判定的具体技巧（如互相攻击一下、打一枪队友等），目的是指导玩家如何应对游戏规则，属于明确的技巧教学。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏吐槽</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">实况解说</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1pTxJz6ETR" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 0:40 · 侧重点：游戏吐槽</span>
+        </div>
+        <div class="etitle">零号大坝也已经沦陷</div>
+        <div class="ersn">模型依据：视频展示了《三角洲行动》的玩法画面，并伴有连续的口播解说，分析了游戏中“夜战大坝”模式的玩家行为和资源获取效率，属于对游戏现象和玩法的讲解，无直播特征。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏实况</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">玩家故事</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1pE1MBGEyK" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 2:10 · 侧重点：游戏实况</span>
+        </div>
+        <div class="etitle">吓哭了，以后认认真真做攻略少沾因果，沾了里外不是人啊。 -</div>
+        <div class="ersn">模型依据：视频中一位创作者（通过口播）讲述了自己作为游戏内容创作者的真实经历和感受，包括视频被删除、被质疑、被批评等负面事件，以及他因此决定未来只做攻略和日常分享的个人心路历程。这符合&#x27;真人讲述自己或他人的真实玩家经历、情感故事&#x27;的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">玩家故事</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏吐槽</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV13PH5zYEQU" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 1:07 · 侧重点：玩家故事</span>
+        </div>
+        <div class="etitle">三角洲行动你m4掉了 三角洲策划。你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你妈死了，你爸死了，你爸死了，你爸死了，你爸死了，你爸死了，你爸死了，你全家</div>
+        <div class="ersn">模型依据：视频中玩家通过口播讲述自己在游戏中的经历，包括获得稀有物品、击杀敌人，但最终被游戏的反作弊系统误封，表达了对游戏策划和反作弊机制的强烈不满和负面情绪，符合游戏吐槽的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">玩家故事</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">创意整活</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV17x4nzgEj6" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 0:45 · 侧重点：玩家故事</span>
+        </div>
+        <div class="etitle">游戏怎么可能跟谁玩都一样 -</div>
+        <div class="ersn">模型依据：视频由多段游戏内角色表演的搞笑场景组成，包括角色同步动作、分屏显示现实建筑的跨场景创意、以及角色脸部特写等，这些内容明显脱离常规对局，以创意和幽默为核心，符合创意整活的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">皮肤展示</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏测评</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1gVsqziExf" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 3:12 · 侧重点：红狼电锯惊魂</span>
+        </div>
+        <div class="etitle">三角洲红狼电锯惊魂捆绑包实机演示！看完再决定要不要买 感谢萨摩老9提供的账号素材</div>
+        <div class="ersn">模型依据：视频展示了游戏内“电锯惊魂”捆绑包的角色皮肤、武器外观、配件及射击手感等实机演示，标题明确指出“看完再决定要不要买”，旨在提供体验评价以帮助观众做出购买决策，符合游戏测评的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">高光剪辑</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏攻略</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1WLHHzuECC" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">和平精英 · 1:17 · 侧重点：高光剪辑</span>
+        </div>
+        <div class="etitle">机动性决定上限，伤害弥补下限。</div>
+        <div class="ersn">模型依据：视频通过游戏画面和口播讲解，详细分析了《和平精英》中MK14步枪的配件选择，对比了不同配件（如快速装填与精致弹头）对武器性能的影响，并给出了推荐理由，具有明确的教学结构和技巧分享，旨在指导玩家如何配置和使用该武器。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">创意剪辑</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏攻略</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1o14JzqERw" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 3:26 · 侧重点：磊哥</span>
+        </div>
+        <div class="etitle">磊哥“春天花会开”的含金量还在提升！王者加载界面同一局的同一个玩家居然有两种ID 冷知识：点赞是免费的，却可以让做视频的up开心好几天，因为对Up真的很重要。 硬币是珍贵的，投币却可以让你我</div>
+        <div class="ersn">模型依据：视频通过展示游戏加载界面、对局内画面、玩家个人主页和设置界面，并配以详细的口播讲解，系统性地解释了《王者荣耀》中玩家ID显示规则的差异（如营地观战与局内ID不同、克隆号的识别方法等），属于针对游戏机制的结构化教学内容。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">角色展示</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏测评</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1ZJ4tz4EZG" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 2:08 · 侧重点：英雄展示</span>
+        </div>
+        <div class="etitle">论体验服哪吒被改的有多招笑，哪吒玩家有辐了～ BV1vp4qzjECg 一味地唱衰肯定不客观，这是我的新视频，大家自行判断。</div>
+        <div class="ersn">模型依据：视频通过游戏内演示，系统性地分析了体验服哪吒改动后的各项缺点（飞行速度、伤害、带线能力等），并表达了负面评价和结论性判断（“四不像”、“比老版还废”），符合游戏测评的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏测评</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">创意整活</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1Hp4ezSERu" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">蛋仔派对 · 2:00 · 侧重点：游戏测评</span>
+        </div>
+        <div class="etitle">蛋仔派对：欺骗玩家的地图推荐须狠狠举报一波！</div>
+        <div class="ersn">模型依据：视频通过游戏画面、创作者的口播讲解和穿插的表情包，讲述了创作者被一个虚假宣传的地图欺骗，并最终举报该地图的经历。整个过程以幽默、带有吐槽性质的叙事方式呈现，利用游戏内外的元素构建了一个完整的搞笑剧情和脑洞，符合创意整活的定义。</div>
+      </div></div>
+
+  <h3>长视频只看了前段（3 条）</h3>
+  <p class="sub">代理只覆盖前 120 秒，开头形态与整体不一致　—　<b>技术限制</b>：全片抽帧已验证是负收益（−3.2pp）</p>
+  <div class="ecards">
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">游戏测评</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏攻略</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1Ug4mzNEDF" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">三角洲行动 · 9:21 · 侧重点：游戏测评</span>
+        </div>
+        <div class="etitle">原来蜂医才是三角洲最强的猛攻干员【流言终结者5】 感谢@祥云璧  和@柠檬黄DSB    全程协助参与本期的测试，真的太辛苦了，给他们点点关注吧</div>
+        <div class="ersn">模型依据：视频以“流言终结者”的形式，通过多段游戏实录测试并讲解游戏中的各种机制和谣言（如勾爪、坠落伤害、蜂医减伤效果等），旨在提供游戏技巧和知识，具有明确的教学结构，符合“游戏攻略”的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">才艺展示</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">真人演绎</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV19zsHzaExY" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 10:31 · 侧重点：游戏周边</span>
+        </div>
+        <div class="etitle">史上最&quot;吵&quot;的技能开箱！CV也忍不住了-iQOO你干得好哇！ 恰逢王者10周年！来一个iQOO 15典藏版的开箱嘿嘿！顺便整点小活（bushi） 这次的iQOO王者荣耀十周年典藏版真的给了我</div>
+        <div class="ersn">模型依据：视频中真人出镜，扮演游戏相关角色进行产品开箱表演，有台词（口播和配音），有情节（技能开箱的创意演绎），符合真人演绎的定义。开头的技能展示和后续的开箱讲解都以真人表演的形式呈现。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">真人演绎</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">直播切片</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1MnxFzFEMf" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 95:40 · 侧重点：真人演绎</span>
+        </div>
+        <div class="etitle">王者荣耀十周年玩家自制晚会 王者荣耀十周年玩家自制晚会 感谢每一个不可或缺的你</div>
+        <div class="ersn">模型依据：视频开头出现直播平台界面、在线人数、聊天框、弹幕等直播特征，且有真人出镜进行互动，符合直播切片的判定标准。</div>
+      </div></div>
+
+  <h3>模型判法更符合 24 类定义（4 条）</h3>
+  <p class="sub">模型依据对照定义是成立的，Excel 标签更像沿用了系列惯例　—　<b>建议改 Excel</b></p>
+  <div class="ecards">
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">武器展示</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">创意整活</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1Q9W9zEE76" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">和平精英 · 1:29 · 侧重点：武器展示</span>
+        </div>
+        <div class="etitle">自制传世武器 &amp;狼牙之刃·啸月      【和平精英PC模拟器】</div>
+        <div class="ersn">模型依据：视频内容是玩家自制（脑洞）的传世武器，并将其概念性地融入游戏画面进行展示和讲解，包括武器的设定、外观和实战效果，具有明显的创意和整活性质，而非常规的游戏实况或攻略。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">颜值COS</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">真人演绎</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1nCHwz7ErH" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">和平精英 · 0:52 · 侧重点：颜值COS</span>
+        </div>
+        <div class="etitle">全都是泡沫7.0</div>
+        <div class="ersn">模型依据：视频开头有真人角色之间的对话和情节发展，讲述了一个女孩因情感对话而进行形象转变的短剧。视频中包含真人变装和舞蹈展示，但这些元素都服务于整体的剧情演绎。片头明确标注“剧情演绎 仅供娱乐”，符合真人演绎的定义。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">二创类</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">皮肤展示</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1wixizRE6E" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">王者荣耀 · 1:00 · 侧重点：动画二创</span>
+        </div>
+        <div class="etitle">你最喜欢吕布哪个皮肤？ 经费爆炸的一集</div>
+        <div class="ersn">模型依据：视频通过AI生成技术，展示了王者荣耀角色吕布的多个不同皮肤，包括其外观、技能特效和专属语音，并伴有流畅的转场和背景音乐。视频标题也明确询问用户最喜欢的吕布皮肤。</div>
+      </div>
+      <div class="ecard">
+        <div class="ehd">
+          <span class="chip gt">角色展示</span>
+          <span class="arrow">→</span>
+          <span class="chip pred">游戏宣传</span>
+          <a class="vid" href="https://www.bilibili.com/video/BV1cysnz3Ecw" target="_blank" rel="noopener">▸ 视频</a>
+          <span class="emeta">蛋仔派对 · 1:57 · 侧重点：影爪梵蒂娅剧情PV</span>
+        </div>
+        <div class="etitle">逃出惊魂夜“影爪梵蒂娅”剧情PV-「怪盗的重生」 「上一世，我被恶人所害。」 「这一世，我会为我的父亲——伟大的主教蓝慈，重新偷走七颗宝石！」  复生后，她集齐七颗宝石的执念未消。 而当最后</div>
+        <div class="ersn">模型依据：视频为官方发布的动画剧情PV，展示了新角色“影爪梵蒂娅”的背景故事，画面精良，且描述中明确提及“剧情PV”和新角色上线信息，符合游戏宣传片的特征。</div>
+      </div></div>
+
+
+  <h2>四、哪些方法没能复用</h2>
+  <div class="fail">
+    <b>话题规则层：在 B站 挖出 0 条规则</b><br>
+    v3 靠话题+作者规则拿到 +1.35pp，但 B站 97% 的视频没有话题标签，
+    规则挖掘直接返回空。
+  </div>
+  <div class="fail">
+    <b>作者规则：10 个种子只有 6 个正收益，平均 +0.43pp，不采纳</b><br>
+    500 条分散在 335 个 UP 主，最多的只有 8 条，达不到 v3 的样本量门槛。
+    降到 n≥3 虽然能挖出 11 条规则，但 test 上不稳定。
+  </div>
+  <div class="fail">
+    <b>按表分治：只有三角洲表在 5 个种子上一致，test 仅 2/5 正收益</b><br>
+    v3 的分治能拿 +2.47pp（5/5 种子一致），B站 上不成立——
+    直接全量用 bili_v11（94.61%）比分治（73.92%）更好。
+  </div>
+
+  <h2>五、过程中修的两个 bug</h2>
+  <div class="panel"><table>
+    <tr><th>问题</th><th>表现</th><th>修复</th></tr>
+    <tr><td><code>classify.py</code> 的标签集路由用 <code>endswith("_v8")</code></td>
+        <td><code>bili_v11</code> 不匹配任何分支，静默退回 16 类 <code>LABELS</code>，
+            导致「游戏测评/皮肤展示/游戏吐槽」被判非法标签，<b>20 条整条失败</b></td>
+        <td>改为显式枚举 <code>_v8/_v9/_v10/_v11</code>，并打印实际标签集</td></tr>
+    <tr><td><code>max_tokens=700</code> 截断响应</td>
+        <td>v11 的「判断依据」更长，约 5% 的响应 JSON 不完整</td>
+        <td>提到 1200，并加正则兜底解析截断的 JSON</td></tr>
+  </table></div>
+
+  <h2>六、结论</h2>
+  <div class="panel">
+    <p><b>方法可以复用，但要按平台重新验证。</b>v3 的核心资产里：</p>
+    <ul>
+      <li>✅ <b>业务口径框架</b>（哪些标签对视为同类）——可复用，但对数需要重新确定</li>
+      <li>✅ <b>提示词骨架</b>（判定规程 + 24 类定义）——可复用，加平台说明后 +1.5pp</li>
+      <li>✅ <b>dev/test + 多种子验证流程</b>——可复用，而且正是它挡住了不稳的分治与作者规则</li>
+      <li>❌ <b>话题规则层</b>——B站 没有话题标签，完全失效</li>
+      <li>❌ <b>按表分治</b>——B站 上种子间不一致，不成立</li>
+    </ul>
+    <p>B站 当前 <b>94.61%</b>，剩余 25 条错误
+       分布在同样多的混淆方向上——再加豁免对每组只能救 1 条，已无意义。</p>
+    <p style="margin-bottom:0">按成因拆开后有三条可行路径（详见评测报告第五节）：
+       <b>8 条</b>是真人出镜优先级过高盖掉了更贴切的类，可以改提示词；
+       <b>10 条</b>是内容横跨两类，需要业务方定「吐槽 vs 攻略」这类的优先顺序；
+       <b>4 条</b>模型判法对照 24 类定义更成立，建议改 Excel。</p>
+  </div>
+
+  <footer>
+    逐条错误明细见 <code>content_eval/out/v4_评测报告.md</code>　·　
+    生成脚本：<code>content_eval/build_v4_compare.py</code>
+  </footer>
+</div></body></html>

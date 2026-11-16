@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>候选口径豁免对 — 请判定</title>
+<style>
+  :root { --bg:#f7f8fa; --panel:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+    --gt:#b91c1c; --gtbg:#fee2e2; --pred:#1d4ed8; --predbg:#dbeafe; --accent:#0f766e;
+    --focus:#a16207; --focusbg:#fef9c3; --warn:#b45309; --warnbg:#fef3c7; --ok:#047857; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0b0f14; --panel:#131a22; --ink:#e5e7eb; --muted:#9ca3af; --line:#263241;
+      --gtbg:#3f1d1d; --predbg:#172554; --gt:#fca5a5; --pred:#93c5fd;
+      --focusbg:#3b2f0b; --focus:#fde047; --warnbg:#3b2f0b; --warn:#fcd34d; --ok:#6ee7b7; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.65; padding-bottom:70px;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:36px 20px 40px; }
+  h1 { font-size:25px; margin:0 0 6px; }
+  h2 { font-size:19px; margin:36px 0 10px; border-bottom:1px solid var(--line); padding-bottom:8px; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .alert { background:var(--warnbg); color:var(--warn); border:1px solid var(--warn);
+    border-radius:12px; padding:14px 18px; margin:14px 0; font-size:14px; }
+  .ask { background:rgba(15,118,110,.08); border:1px solid var(--accent);
+    border-radius:12px; padding:16px 18px; margin:16px 0; font-size:14px; }
+  .pair { background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:16px; margin:14px 0; }
+  .pair.done { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+  .phd { display:flex; justify-content:space-between; align-items:center;
+    gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .pname { font-size:16px; } .vs { color:var(--muted); margin:0 4px; }
+  .pgain { font-size:12px; color:var(--muted); }
+  .smps { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
+  .smp { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .smp .meta { font-size:11px; color:var(--muted); margin-left:6px; }
+  .smp .t { font-size:13px; margin:6px 0; }
+  .smp .lb { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
+  .smp .rsn { font-size:11.5px; color:var(--muted); border-top:1px dashed var(--line); padding-top:6px; }
+  a.vid { color:var(--accent); text-decoration:none; font-size:12px; font-weight:600;
+    border:1px solid var(--accent); padding:2px 8px; border-radius:6px; }
+  a.vid:hover { background:var(--accent); color:#fff; }
+  .chip { display:inline-block; font-size:11.5px; padding:2px 8px; border-radius:999px; }
+  .chip.gt { background:var(--gtbg); color:var(--gt); font-weight:600; }
+  .chip.pred { background:var(--predbg); color:var(--pred); font-weight:600; }
+  .chip.focus { background:var(--focusbg); color:var(--focus); }
+  .fb { border-top:1px solid var(--line); margin-top:12px; padding-top:10px; }
+  .fb-q { font-size:12.5px; color:var(--muted); font-weight:600; margin-bottom:6px; }
+  .fb label { display:block; font-size:13.5px; margin:4px 0; cursor:pointer; }
+  .fb input[type=radio] { margin-right:7px; vertical-align:middle; }
+  .fb-why { width:100%; margin-top:7px; font:inherit; font-size:12.5px; padding:6px 8px;
+    border:1px solid var(--line); border-radius:6px; background:var(--bg);
+    color:var(--ink); resize:vertical; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; font-size:12px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  code { background:var(--line); padding:1px 5px; border-radius:4px; font-size:13px; }
+  .bar { position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--panel);
+    border-top:1px solid var(--line); padding:10px 20px; display:flex; gap:12px;
+    align-items:center; flex-wrap:wrap; box-shadow:0 -2px 12px rgba(0,0,0,.08); }
+  .bar .prog { font-size:13px; font-variant-numeric:tabular-nums; }
+  .bar .prog b { color:var(--accent); font-size:16px; }
+  .bar .est { font-size:13px; color:var(--muted); }
+  .bar .est b { color:var(--ok); font-size:15px; }
+  .btn { font:inherit; font-size:13px; padding:7px 14px; border-radius:8px;
+    border:1px solid var(--accent); background:var(--accent); color:#fff;
+    cursor:pointer; font-weight:600; }
+  .btn.ghost { background:transparent; color:var(--accent); }
+  .toast { position:fixed; bottom:70px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:8px;
+    font-size:13px; z-index:60; opacity:0; transition:opacity .25s; pointer-events:none; }
+  .toast.show { opacity:1; }
+</style></head><body><div class="wrap">
+  <h1>候选口径豁免对 — 请判定</h1>
+  <p class="sub">B站 500 条样本 · 当前 372/464 = 80.17% ·
+     22 个候选对待判定 · 2026-11-16</p>
+
+  <div class="alert">
+    <b>这些对我没有自己加，原因是：豁免对的含义是「业务上认为这两类可以互换」。</b><br>
+    如果把下面 22 个对全部豁免，准确率会到 <b>94.61%</b>——数字很好看，
+    但里面混着 <code>才艺展示／二创类</code>、<code>创意剪辑／颜值COS</code> 这种
+    明显不是一回事的对。那样做出来的准确率不再反映分类质量，
+    下游拿去做分发会出问题，而且被追问时无法解释。
+  </div>
+
+  <div class="ask">
+    <b>怎么判：</b>每个对下面有 3 条真实样本（带视频链接、Excel 标签、模型标签、模型依据）。
+    点开看完问自己一句——<b>如果一条内容被打成另一个标签，业务上能接受吗？</b>
+    <ul>
+      <li>能接受 → 可以豁免（像你上次判的「创意整活／游戏实况」那样）</li>
+      <li>不能接受 → 不能豁免，这是模型真错，留在错误里，我去改提示词/规则</li>
+      <li>拿不准 → 选「再看看」，我多给些样本</li>
+    </ul>
+    右下角实时显示<b>按你的选择能到多少准确率</b>。填完点导出给我。
+  </div>
+
+  <h2>候选对（22 个，按收益排序）</h2>
+  
+  <div class="pair" data-a="实况解说" data-b="高光剪辑" data-gain="6">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">实况解说</span>
+        <span class="vs">／</span><span class="chip pred">高光剪辑</span></div>
+      <div class="pgain">豁免后 +6 条 · 累计可到 81.5%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV133xazxEa1" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 秋婷婷哦 · 0:56</span>
+        <div class="t">自信且猫女 -</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频展示了多段《王者荣耀》游戏过程，并伴有主播连续的口播讲解和幽默反应，没有直播特征，且内容围绕具体对局进行讲解。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1ASsmzQEby" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 情圣爱科研 · 0:26</span>
+        <div class="t">还记得初代盾山的统治力吗，ban房坐的最久的一个英雄</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频展示了《王者荣耀》中盾山角色的游戏画面，并伴有清晰的口播解说和字幕，详细介绍了该角色在特定版本下的技能机制、强度特点以及被禁用原因，属于对游戏内容进行连续讲解。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1BgWUzVEor" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 九木又下饭了 · 1:40</span>
+        <div class="t">一秒2W伤害，满血斩杀线！ -</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频展示了王者荣耀的单局游戏过程，并伴有主播对游戏操作、局势和策略的连续口播讲解，无直播特征。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_0" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_0" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_0" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意整活" data-b="游戏攻略" data-gain="5">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意整活</span>
+        <span class="vs">／</span><span class="chip pred">游戏攻略</span></div>
+      <div class="pgain">豁免后 +5 条 · 累计可到 82.5%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV13Rstz2E73" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 老月亮M · 1:51</span>
+        <div class="t">乌鲁鲁降临王者峡谷！ -</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：整活向玩法</span></div>
+        <div class="rsn">视频开头明确表示是&#x27;乌鲁鲁的打法教学&#x27;，随后口播详细讲解了该角色的出装、清线技巧、对线策略和技能使用注意事项，具有明确的教学结构。视频中段插入了广告，结尾有创意展示，但主体内容仍是游戏攻略。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1aYHMzEERQ" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 晚羽和平精英 · 6:03</span>
+        <div class="t">挑战速刷100个武器箱测试M338爆率【和平精英PC模拟器】</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：创意整活</span></div>
+        <div class="rsn">视频内容围绕“挑战速刷100个武器箱测试M338爆率”展开，口播详细讲解了开箱路线、装备天赋选择，并展示了开箱过程和结果，具有明确的教学结构和技巧分享性质，符合游戏攻略的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1HWxDzFEvG" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 鱼丸游戏酱 · 3:45</span>
+        <div class="t">蛋仔派对：逃离巨人小丑？千万不要激怒他！不然你会插翅难飞！</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：整活向玩法</span></div>
+        <div class="rsn">视频展示了《蛋仔派对》中一个自定义地图的完整游戏过程，并伴有详细的口播解说，分步骤指导玩家如何逃离巨人小丑，包括寻找道具、输入密码、躲避小丑等，具有明确的教学结构和目的，符合游戏攻略的定义。视频标题也暗示了攻略性质。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_1" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_1" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_1" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意剪辑" data-b="直播切片" data-gain="4">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意剪辑</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +4 条 · 累计可到 83.4%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV19nsozaE6i" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · LuFee__ · 4:08</span>
+        <div class="t">《王者全明星阵容》</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频中多次出现主播本人出镜的画面（例如 0:20, 0:39, 1:12, 1:29, 1:46），他们直接面对镜头说话或进行互动，符合判定规程中直播特征的最高优先级条件。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1uw1KBLE3n" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 小蒋睡不醒-_- · 2:37</span>
+        <div class="t">蛋仔派对：最新梵蒂娅！惊魂猎场大逃亡挑战赛，小蒋带粉丝闯难关 -</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频中出现主播本人出镜画面（0:06-0:09），并在游戏画面中常驻主播摄像头小窗（0:09-0:26），同时包含游戏内抽奖、账号展示以及与粉丝互动的口播内容，符合直播切片特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1VTWJzXEkS" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 沐兮_三角洲解说 · 1:31</span>
+        <div class="t">哈夫克你看看你养的超人 典狱长的超带排大ASh</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频在0:12-0:18处出现主播摄像头小窗，展示主播本人及其反应，符合直播特征中的“主播摄像头小窗 / 画中画”，因此直接判定为直播切片。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_2" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_2" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_2" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="实况解说" data-b="游戏攻略" data-gain="4">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">实况解说</span>
+        <span class="vs">／</span><span class="chip pred">游戏攻略</span></div>
+      <div class="pgain">豁免后 +4 条 · 累计可到 84.3%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1aLxozfEFs" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 磊哥游戏 · 4:33</span>
+        <div class="t">超标英雄程咬金，超高斩杀线，轻松抢走野怪和哥布林</div>
+        <div class="lb"><span class="chip gt">Excel：实况解说</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：实况解说</span></div>
+        <div class="rsn">视频展示了《王者荣耀》程咬金的单局游戏过程，并伴有主播连续的口播讲解。讲解内容详细分析了程咬金的出装思路（如购买狂暴双刃而非影刃的理由）、技能特点（被动和2技能的斩杀线）以及打法策略（入侵野区、兵线处理、拉扯敌人），其中还暂停游戏画面展示装备面板进行教学，具有明确的教学结构和技巧分享，符合游戏攻略的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1gFsJzHE4x" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 米粒酱3 · 6:43</span>
+        <div class="t">不敢想 对于一个想拥有炫彩裤兜的鼠来说 这个“行家里手”任务会有多绝望 不敢想 对于一个想拥有炫彩裤兜的鼠来说 这个“行家里手”任务会有多绝望#三角洲行动 #三角洲行动欢乐剧场#三角洲s6烈火冲天新赛季#晒出你的三角洲精</div>
+        <div class="lb"><span class="chip gt">Excel：实况解说</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：实况解说</span></div>
+        <div class="rsn">视频开头详细讲解了游戏任务的文字描述和奖励，随后结合游戏实况演示了任务的难点和完成技巧（如跳水技巧、牧羊人任务的策略），并提供了&#x27;逃课的小技巧&#x27;，具有明确的教学和攻略性质。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1ikHjz5EVP" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 磊哥游戏 · 3:03</span>
+        <div class="t">程咬金一局能带3个召唤师技能，这还不超标</div>
+        <div class="lb"><span class="chip gt">Excel：实况解说</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：实况解说</span></div>
+        <div class="rsn">视频展示了《王者荣耀》的连续游戏过程，并伴有主播的连续口播讲解。讲解内容主要围绕游戏的英雄禁用机制、匹配系统（定制局）进行分析，并提供了具体的游戏策略和技巧（如如何通过控制输出分来影响匹配结果），符合&#x27;有明确教学结构（分步骤、技巧清单、打法教学），不依赖单局过程&#x27;的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_3" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_3" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_3" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意整活" data-b="直播切片" data-gain="4">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意整活</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +4 条 · 累计可到 85.1%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1DrsJzpEPm" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 制裁哥丶 · 1:15</span>
+        <div class="t">林七岁打和平精英了战术细节全曝光.</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：创意整活</span></div>
+        <div class="rsn">视频画面左侧有主播本人出镜，以画中画形式常驻，并对游戏过程进行反应和解说，符合直播切片的特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1puxkzqEJU" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 一克麻辣毛蛋儿 · 3:34</span>
+        <div class="t">蛋仔派对：无限反转的地图推荐他来整蛊朋友真是太合适了！</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：创意整活</span></div>
+        <div class="rsn">视频画面左下角有主播本人出镜的画中画，主播对游戏过程进行实时反应和口播讲解，符合直播切片的最高优先级特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1UqHbzKE4x" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 地铁逃生剧本 · 1:01</span>
+        <div class="t">接不接？</div>
+        <div class="lb"><span class="chip gt">Excel：直播切片</span>
+          <span class="chip pred">模型：创意整活</span>
+          <span class="chip focus">侧重点：直播切片</span></div>
+        <div class="rsn">视频展示游戏内装备合成和抽奖过程，配有夸张的口播反应和持续出现的动画狗头表情包，属于脱离常规单局的搞笑创意内容，且包含非游戏素材混搭。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_4" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_4" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_4" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏攻略" data-b="游戏资讯" data-gain="4">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏攻略</span>
+        <span class="vs">／</span><span class="chip pred">游戏资讯</span></div>
+      <div class="pgain">豁免后 +4 条 · 累计可到 86.0%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1GE4gzNE3H" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 和平敖隐 · 1:11</span>
+        <div class="t">地铁最强刷镰体质！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏攻略</span>
+          <span class="chip pred">模型：游戏资讯</span>
+          <span class="chip focus">侧重点：游戏攻略</span></div>
+        <div class="rsn">视频0:43-0:56部分明确口播告知“和平精英最新活动来袭，每人必得永久载具皮肤和传世武器”，并展示了活动奖励和领取方式，符合官方活动告知的特征。视频前半段是关于游戏内武器和刷怪策略的讲解，后半段是展示库存，但活动告知部分属于最高优先级的官方物料中的游戏资讯。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1gPyiBaE9t" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 神子的神子 · 1:20</span>
+        <div class="t">超体对抗更新内容【和平精英PC模拟器】</div>
+        <div class="lb"><span class="chip gt">Excel：游戏攻略</span>
+          <span class="chip pred">模型：游戏资讯</span>
+          <span class="chip focus">侧重点：游戏攻略</span></div>
+        <div class="rsn">视频通过游戏画面和口播讲解，逐条列举并展示了《和平精英》超体对抗模式的11项更新内容，包括新模式、新机制、新场景、新插件和新职业，明确以告知游戏版本更新信息为目的。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1wE1KBeERV" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 和平精英TJ · 1:53</span>
+        <div class="t">据目前可靠消息，军犬还会上线地铁！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：游戏资讯</span></div>
+        <div class="rsn">视频内容围绕《和平精英》中即将上线的新功能“军犬”展开，详细讲解了军犬的四种常用语音指令（寻找敌人、舔包、寻找物品、攻击敌人），并通过游戏画面演示了每个指令的具体用法和实战效果，旨在教学玩家如何使用该新机制，符合游戏攻略的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_5" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_5" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_5" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏吐槽" data-b="直播切片" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏吐槽</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 86.6%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV11Ny8BqEtm" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · JKAI杰凯 · 103:17</span>
+        <div class="t">国外声乐老师大实话锐评《王者荣耀共创之夜》2025全开麦舞台 REACTION｜林俊杰 周深 单依纯 GAI周延 吉克隽逸 汪苏泷 李玉刚 刘宇宁 沈佳润 不吹不黑 真实点评 团队介绍和声明：https://b23.tv</div>
+        <div class="lb"><span class="chip gt">Excel：游戏吐槽</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：共创之夜</span></div>
+        <div class="rsn">视频中主播本人出镜，并以画中画形式常驻画面，对《王者荣耀共创之夜》的舞台表演进行反应和点评。根据判定规程第0步，画面出现主播本人出镜和主播摄像头小窗/画中画，直接判为直播切片。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1oa43z5EZF" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 唯一讲述者 · 20:57</span>
+        <div class="t">三角洲优化舆情危机：策划怎么这么喜欢教玩家怎么玩游戏呢？ -</div>
+        <div class="lb"><span class="chip gt">Excel：游戏吐槽</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：游戏吐槽</span></div>
+        <div class="rsn">视频中主播本人出镜，对着镜头进行口播讲解，讨论游戏《三角洲行动》的舆情危机和玩法机制，符合直播特征中的“主播本人出镜”。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1YkymBNEMw" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 铁豆钢蛋 · 73:57</span>
+        <div class="t">歌剧老师锐评王者荣耀共创夜live现场</div>
+        <div class="lb"><span class="chip gt">Excel：游戏吐槽</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：共创之夜</span></div>
+        <div class="rsn">视频中两位主播本人全程出镜，对《王者荣耀共创夜》的活动内容和游戏皮肤进行观看和实时评论，符合判定规程中&#x27;主播本人出镜&#x27;直接判为&#x27;直播切片&#x27;的规则。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_6" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_6" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_6" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏测评" data-b="游戏资讯" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏测评</span>
+        <span class="vs">／</span><span class="chip pred">游戏资讯</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 87.3%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV12yWCzyEDf" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · -无处不在的Bug · 2:24</span>
+        <div class="t">蛋仔派对：盘点蛋仔里存在感最低的东西！我不说你绝对想不起来！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：游戏测评</span>
+          <span class="chip focus">侧重点：道具盘点</span></div>
+        <div class="rsn">视频通过口播讲解，盘点并分析了《蛋仔派对》中存在感较低的道具和功能（如推图展板、蛋圈改名卡、社交道具），对这些游戏机制的实用性、玩家使用情况及其被遗忘的原因进行了评价和分析，符合游戏测评中对游戏优缺点进行分析和体验评价的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1Bss6zREAT" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 僵尸教授- · 3:06</span>
+        <div class="t">蛋仔派对：从夯到拉！锐评惊魂寻宝队所有道具！品质越高反而越拉？</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：游戏测评</span>
+          <span class="chip focus">侧重点：惊魂寻宝队</span></div>
+        <div class="rsn">视频标题明确为“锐评惊魂寻宝队所有道具”，内容是对《蛋仔派对》中“惊魂寻宝队”模式的各种道具进行详细的优缺点分析、使用场景讲解，并根据其价值和实用性进行分级（如“夯”、“顶尖”、“NPC”、“拉完了”），核心是评价和结论性判断。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1Ct47z3E2q" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · -无处不在的Bug · 2:17</span>
+        <div class="t">蛋仔派对：盘点蛋仔岛最鸡肋的东西！你觉得最没用的是哪个？</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：游戏测评</span>
+          <span class="chip focus">侧重点：游戏资讯</span></div>
+        <div class="rsn">视频通过口播讲解，结合游戏画面，系统性地盘点并评价了《蛋仔派对》中被认为“鸡肋”的游戏功能（如邮箱机器人、传送门、游戏厅），分析了其优缺点和实际作用，符合游戏测评的定义。视频中穿插的真人表情包属于辅助表达，不改变内容主体。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_7" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_7" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_7" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏资讯" data-b="直播切片" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏资讯</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 87.9%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1CJW4zoEEz" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 僵尸教授- · 2:47</span>
+        <div class="t">蛋仔派对：从夯到拉！锐评惊魂寻宝队所有怪物！这哥俩才是真正的双生怨灵！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：惊魂寻宝队</span></div>
+        <div class="rsn">视频中的游戏画面包含直播平台界面元素，如“LIVE”标识和“上交进度”等直播UI，符合直播特征的最高优先级判断规则。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1HosbzPECg" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 王者资讯中心站 · 1:29</span>
+        <div class="t">策划回应女娲方块人机事件，不料正中磊哥给策划挖的坑 -</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：游戏资讯</span></div>
+        <div class="rsn">视频中多次出现游戏策划在直播/访谈场景中出镜的画中画画面，并有口播提及“策划公开直播”，符合直播特征的最高优先级判定规则。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1srs1zJE5v" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 最后一只渡渡鸟 · 3:09</span>
+        <div class="t">现已删除英雄：孙悟空 都看到人家的简介了还不关注？？(✿◡‿◡)</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：游戏资讯</span></div>
+        <div class="rsn">视频在0:16-0:26处出现主播本人出镜的直播画面，包含直播平台界面、聊天框、礼物特效等直播特征，符合判定规程中直播特征的最高优先级。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_8" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_8" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_8" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意剪辑" data-b="实况解说" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意剪辑</span>
+        <span class="vs">／</span><span class="chip pred">实况解说</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 88.6%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1EhHxzCEan" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 心怡游戏妹 · 5:54</span>
+        <div class="t">监狱上限最高的生物样本室，会不会出究极大红？！  三角洲行动</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频展示了玩家多次进入游戏内高价值房间进行搜刮的过程，并伴有全程的口播解说，对搜刮结果进行评价和吐槽，同时使用猫咪表情包和文字特效增强趣味性，但核心内容是围绕游戏过程的连续讲解，符合实况解说的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1LiHWzaELg" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 和平精英江夏 · 6:22</span>
+        <div class="t">我有一颗很野的心 叫 创乐园</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频展示了多段游戏对局过程，包括击杀和段位提升，并伴有主播对游戏过程、地图特点（创乐园）以及个人游戏体验的连续口播讲解，无直播特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1rbnJzoENP" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 醒醒点灯呐 · 1:47</span>
+        <div class="t">蛋仔派对：盘点蛋仔不同领域的顶级主播 最后一个你绝对认识！</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频通过画外音连续讲解，盘点《蛋仔派对》不同领域的顶级主播，并结合游戏内账号界面、成就展示和实际游戏操作画面进行说明，符合实况解说中“主播/作者的口播解说”和“游戏实况”的特征。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_9" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_9" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_9" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="直播切片" data-b="高光剪辑" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">直播切片</span>
+        <span class="vs">／</span><span class="chip pred">高光剪辑</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 89.2%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1EYsZzVE94" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 上心Hx · 1:44</span>
+        <div class="t">俩段顶级拉扯让你爱上韩信 韩信真好玩啊</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频画面右上角有Bilibili平台水印（上心HX Bilibili），且有玩家在游戏过程中发出的简短实时反应（如“我血好疼”、“我还能撑”），符合直播特征的判定标准。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1kYWhzeEEw" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 在下易某很细 · 2:22</span>
+        <div class="t">核 爆 刘邦飞雷神你们觉得怎么样，不错的话记得给个三连哦</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频中0:53-1:09出现真人手部进行手机开箱展示，明确符合判定规程中“第 0 步：直播特征 - 主播本人出镜（包括开箱）”的条件，因此直接判定为直播切片。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1m11PBTEhD" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 和平精英小州 · 3:45</span>
+        <div class="t">当小州帮女粉丝制裁两个班门弄斧的魔怔哥是种什么体验？</div>
+        <div class="lb"><span class="chip gt">Excel：高光剪辑</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：高光剪辑</span></div>
+        <div class="rsn">视频开头和大部分时间展示游戏大厅界面，并有玩家（包括主播小州）之间的实时语音对话和互动，讨论主播身份、粉丝关注等，且画面右上角有Bilibili水印和主播ID“和平精英小州”，符合直播特征中的“主播ID常驻”、“连麦”和“直播互动”。即使中间插入了产品广告，整体内容仍以直播互动为核心。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_10" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_10" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_10" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意整活" data-b="真人演绎" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意整活</span>
+        <span class="vs">／</span><span class="chip pred">真人演绎</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 89.9%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1JE4Dz4E3V" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 账号已注销jbsm7891,柠雨collect · 0:18</span>
+        <div class="t">出复苏呼吸机了！ 欢迎各位义父加入！三角洲聊天交友企鹅频道：yu20259178</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：真人演绎</span>
+          <span class="chip focus">侧重点：ai</span></div>
+        <div class="rsn">视频中真人演员在医院场景中演绎了一段有台词、有情节的搞笑短剧，符合真人演绎的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1K1H7zwEaN" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 爱玩具的大成 · 3:43</span>
+        <div class="t">河边藏了8个和平精英拼装模型，游乐场寻宝大隐藏五爪金龙</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：真人演绎</span>
+          <span class="chip focus">侧重点：创意整活</span></div>
+        <div class="rsn">视频中真人出镜，在户外进行一场寻找《和平精英》主题玩具枪的寻宝活动，全程有口播讲解，并设定了简单的寻宝剧情（找到8个枪就能获得奖励），符合真人演绎剧情的特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1uD43zAEqV" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 冒牌军师哦 · 0:49</span>
+        <div class="t">王者必输局的各种征兆？你还知道哪些！ -</div>
+        <div class="lb"><span class="chip gt">Excel：真人演绎</span>
+          <span class="chip pred">模型：创意整活</span>
+          <span class="chip focus">侧重点：真人演绎</span></div>
+        <div class="rsn">视频中主播本人出镜，通过口播和游戏画面/文字叠加，以幽默玩梗的方式列举王者荣耀中“必输局”的各种征兆，并以夸张的视觉特效（眼睛发光、多重系统报错）作为结尾，符合“用游戏梗做搞笑、抽象、脑洞、整活向内容”的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_11" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_11" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_11" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="二创类" data-b="才艺展示" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">二创类</span>
+        <span class="vs">／</span><span class="chip pred">才艺展示</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 90.5%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1NQW1zUE1U" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 苏打baka · 6:52</span>
+        <div class="t">人机合一！自制战机模拟器？吃鸡打洲爽感翻倍起飞体验！</div>
+        <div class="lb"><span class="chip gt">Excel：才艺展示</span>
+          <span class="chip pred">模型：二创类</span>
+          <span class="chip focus">侧重点：才艺展示</span></div>
+        <div class="rsn">视频主体是真人UP主从设计到制作一个复杂的物理游戏模拟器的全过程，包括材料准备、组装、焊接、喷漆等，最终进行游戏体验，符合“二创类”中“手工”的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1Un4Jz9EBU" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 糖柏虎- · 1:15</span>
+        <div class="t">用白砂糖竟然能做出蛋仔派对的青花瓷盖宝儿，你敢信？</div>
+        <div class="lb"><span class="chip gt">Excel：才艺展示</span>
+          <span class="chip pred">模型：二创类</span>
+          <span class="chip focus">侧重点：手工</span></div>
+        <div class="rsn">视频展示了真人（戴手套）使用白砂糖等材料手工制作《蛋仔派对》角色“青花瓷盖宝儿”的完整过程，画面有详细的制作步骤和文字说明，符合二创类中“手工”的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1xSx2zdEq4" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 徐Toso,心上秋的林夕 · 3:06</span>
+        <div class="t">共享夜坝声援曲来了！《夜空中最亮的星》鼠鼠们，团结一致！ 作为一名鼠鼠玩家，不可能不支持共享家园！ 来，鼠鼠们，跟我一起装上手电筒，报团取暖！ 原曲：夜空中最亮的星 原唱：逃跑计划 翻唱：千早爱音/高松灯 调音：@心上秋</div>
+        <div class="lb"><span class="chip gt">Excel：才艺展示</span>
+          <span class="chip pred">模型：二创类</span>
+          <span class="chip focus">侧重点：音乐</span></div>
+        <div class="rsn">视频是玩家对歌曲《夜空中最亮的星》的翻唱，并结合了游戏画面和虚拟动画角色演唱的场景，属于音乐二创和动画创作，符合二创类的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_12" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_12" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_12" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意剪辑" data-b="游戏实况" data-gain="3">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意剪辑</span>
+        <span class="vs">／</span><span class="chip pred">游戏实况</span></div>
+      <div class="pgain">豁免后 +3 条 · 累计可到 91.2%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1PuxWzRE3f" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 柯兰-三角洲行动 · 3:27</span>
+        <div class="t">这才是真正的大红局！！！（41.0） -</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：游戏实况</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频展示了《三角洲行动》的单局游戏过程，包括玩家在地图中移动、开锁、搜刮物品等操作，伴有游戏内音效和玩家之间的自然语音对话，没有主播出镜或连续的讲解。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1So46zSEYq" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 南山kuku · 0:25</span>
+        <div class="t">&quot;出货那一刻市场崩了&quot;</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：游戏实况</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频展示了玩家在游戏内进行搜刮、打开箱子并发现稀有武器的完整过程，伴有玩家之间对发现稀有物品的自然对话和惊喜反应，属于单局游戏中的意外事件。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1v64szjE1s" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 太一_世界之盾 · 0:48</span>
+        <div class="t">这个世界好恐怖 -</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：游戏实况</span>
+          <span class="chip focus">侧重点：创意剪辑</span></div>
+        <div class="rsn">视频主要展示了《王者荣耀》的单局游戏过程，并穿插了玩家在游戏内收到大量好友申请的界面，配有玩家自然的语音反应和吐槽，没有主播出镜或连续的讲解，符合游戏实况的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_13" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_13" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_13" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="电竞相关" data-b="直播切片" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">电竞相关</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 91.6%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV15nHLz6EDW" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 哔哩哔哩王者荣耀赛事 · 13:21</span>
+        <div class="t">【2025KPL年度总决赛】10月3日 成都AG超玩会 VS 济南RW侠</div>
+        <div class="lb"><span class="chip gt">Excel：电竞相关</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：KPL</span></div>
+        <div class="rsn">视频中出现主播本人出镜（多位主持人坐在演播室讨论）、画面右下角有“正在直播”字样、右上角有“NEXT”按钮和倒计时，且主持人开场明确提及“KPL官方直播间”，符合直播特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1WD4EzLEEt" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 哔哩哔哩王者荣耀赛事 · 10:02</span>
+        <div class="t">【2025KPL年度总决赛】10月10日 重庆狼队 VS 北京JDG</div>
+        <div class="lb"><span class="chip gt">Excel：电竞相关</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：KPL</span></div>
+        <div class="rsn">视频画面中有多位主持人出镜，背景显示KPL年度总决赛的直播场景，且屏幕下方有“正在直播”字样，主持人正在介绍赛事信息、票务和赛况分析。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_14" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_14" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_14" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意整活" data-b="游戏资讯" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意整活</span>
+        <span class="vs">／</span><span class="chip pred">游戏资讯</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 92.0%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV16mWqzEEUC" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 傻蛋子奶酪 · 2:37</span>
+        <div class="t">蛋仔派对：盘点九月份转场地图推荐一张的原版都是千万爆款！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：创意整活</span>
+          <span class="chip focus">侧重点：地图分享</span></div>
+        <div class="rsn">视频通过口播讲解的方式，盘点并展示了《蛋仔派对》中玩家自制的“转场地图”，这些地图设计独特，用于角色变装和创意拍摄，属于游戏内的“自创玩法”和“脑洞”内容，符合创意整活的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1M51gBXEns" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 隐秘的兔仙 · 1:28</span>
+        <div class="t">蛋仔派对：新追捕者影爪，惊魂夜最强的小黑猫！</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：创意整活</span>
+          <span class="chip focus">侧重点：影爪梵蒂娅</span></div>
+        <div class="rsn">视频以《蛋仔派对》新追捕者“影爪”的玩法展示为核心，通过一人分饰多角的配音对话，围绕新角色能力展开了幽默的剧情演绎和互动，具有明显的剧本化和搞笑创意，而非单纯的游戏实况或攻略讲解。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_15" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_15" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_15" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏实况" data-b="游戏攻略" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏实况</span>
+        <span class="vs">／</span><span class="chip pred">游戏攻略</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 92.5%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV194WrzEEYg" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 是半夏咯,踹皮3 · 2:08</span>
+        <div class="t">大龙aug在大厅都能换些什么呢</div>
+        <div class="lb"><span class="chip gt">Excel：游戏实况</span>
+          <span class="chip pred">模型：游戏攻略</span>
+          <span class="chip focus">侧重点：游戏实况</span></div>
+        <div class="rsn">视频展示了《和平精英》游戏内玩家间的物品交易过程，主播通过口播对交易物品的价值进行评估，并提供交易技巧和注意事项（如避免被骗、耐心查看），旨在帮助玩家理解和进行更合理的交易，属于游戏玩法技巧的讲解。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1hey8BmEYD" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 三角洲行动开心 · 0:40</span>
+        <div class="t">射速快的连狙 -</div>
+        <div class="lb"><span class="chip gt">Excel：游戏攻略</span>
+          <span class="chip pred">模型：游戏实况</span>
+          <span class="chip focus">侧重点：改枪</span></div>
+        <div class="rsn"></div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_16" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_16" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_16" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="实况解说" data-b="游戏资讯" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">实况解说</span>
+        <span class="vs">／</span><span class="chip pred">游戏资讯</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 92.9%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1C5s6zaE1D" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 湖水解说 · 1:02</span>
+        <div class="t">揭秘吃鸡中官方被迫赠送的五款皮肤，看看你都拥有吗？</div>
+        <div class="lb"><span class="chip gt">Excel：实况解说</span>
+          <span class="chip pred">模型：游戏资讯</span>
+          <span class="chip focus">侧重点：地铁逃生</span></div>
+        <div class="rsn">视频通过口播和字幕详细讲解了《和平精英》中官方赠送的五款皮肤的背景和原因，属于告知玩家游戏相关信息的类型。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1s2yrBMEZ3" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · -无处不在的Bug · 2:09</span>
+        <div class="t">蛋仔派对：盘点以前做不到现在很轻松的事！哪个是你的噩梦？</div>
+        <div class="lb"><span class="chip gt">Excel：游戏资讯</span>
+          <span class="chip pred">模型：实况解说</span>
+          <span class="chip focus">侧重点：游戏资讯</span></div>
+        <div class="rsn">视频以《蛋仔派对》的游戏画面为主，主播通过口播连续讲解并盘点游戏中以前很难现在很轻松的技巧和关卡（如梅花桩、回拉跳、钩爪、超级起步），穿插少量搞笑梗图和动画片段作为辅助，符合游戏实况加主播连续讲解的特征。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_17" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_17" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_17" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏吐槽" data-b="游戏测评" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏吐槽</span>
+        <span class="vs">／</span><span class="chip pred">游戏测评</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 93.3%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1KBxMzDEtC" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 我不是鸽几 · 5:49</span>
+        <div class="t">共享监狱的出现是玩家的错吗？策划能不能玩一玩游戏！ 本来3x3安全箱我是想做一期视频吐槽的，但是因为很忙，所以没时间做。今天看完公告之后，我是真的很生气，正好把3x3顺带说一下</div>
+        <div class="lb"><span class="chip gt">Excel：游戏吐槽</span>
+          <span class="chip pred">模型：游戏测评</span>
+          <span class="chip focus">侧重点：游戏吐槽</span></div>
+        <div class="rsn">视频以游戏实录画面为背景，主播进行连续的口播讲解，对游戏的最新公告、3x3任务、共享监狱等机制进行系统性分析和评价，表达了对游戏环境变差的负面观点和批评，符合游戏测评的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1UGySBYEhj" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 貂多鱼 · 0:21</span>
+        <div class="t">你玩貂蝉还敢越塔吗？ -</div>
+        <div class="lb"><span class="chip gt">Excel：游戏吐槽</span>
+          <span class="chip pred">模型：游戏测评</span>
+          <span class="chip focus">侧重点：貂蝉</span></div>
+        <div class="rsn">视频展示了《王者荣耀》貂蝉的单局游戏过程，并伴有口播解说。口播内容主要围绕貂蝉角色的机制变化、发育周期、技能冷却等进行评价和对比，表达了对旧版貂蝉的怀念和对当前版本貂蝉的看法，属于对游戏角色设计和平衡性的体验评价和优缺点分析。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_18" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_18" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_18" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意整活" data-b="皮肤展示" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意整活</span>
+        <span class="vs">／</span><span class="chip pred">皮肤展示</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 93.8%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1LH4xzEEHN" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 一克麻辣毛蛋儿 · 2:18</span>
+        <div class="t">蛋仔派对：蛋仔疑似首个能够和表情联动的皮肤，居然这么便宜？</div>
+        <div class="lb"><span class="chip gt">Excel：皮肤展示</span>
+          <span class="chip pred">模型：创意整活</span>
+          <span class="chip focus">侧重点：灵感菇皮肤</span></div>
+        <div class="rsn">视频包含游戏内新皮肤的展示和抽奖过程，主播本人出镜对抽奖机制进行吐槽和讲解，并自创“毛蛋蘑菇抽”的搞笑抽奖方法，穿插表情包和夸张音效，整体以幽默和脑洞的方式呈现抽奖过程和结果，符合创意整活的定义。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1PRHHzrEYD" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">王者荣耀 · 王者人格小A · 2:10</span>
+        <div class="t">开飞机的蔡文姬 这也太可爱了吧！自制新皮肤特效 -</div>
+        <div class="lb"><span class="chip gt">Excel：创意整活</span>
+          <span class="chip pred">模型：皮肤展示</span>
+          <span class="chip focus">侧重点：创意整活</span></div>
+        <div class="rsn">视频主要展示了蔡文姬的自制玩具飞机主题皮肤，通过口播详细讲解并演示了该皮肤的外观、技能特效（一技能、二技能、大招）以及整体风格。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_19" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_19" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_19" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="游戏攻略" data-b="直播切片" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">游戏攻略</span>
+        <span class="vs">／</span><span class="chip pred">直播切片</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 94.2%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1qHHMzdEB9" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">蛋仔派对 · 僵尸教授- · 2:24</span>
+        <div class="t">蛋仔派对：全网首发！惊魂寻宝队无限体力！肾上腺素无视负重加速技巧！史上最强道具？</div>
+        <div class="lb"><span class="chip gt">Excel：游戏攻略</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：惊魂寻宝队</span></div>
+        <div class="rsn">视频画面包含主播本人出镜的画中画，左上角有&#x27;LIVE&#x27;标识，且有Bilibili水印和游戏内聊天框，符合直播切片特征。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1WP4tzBEmX" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">和平精英 · 晚羽和平精英 · 3:08</span>
+        <div class="t">挑战让强袭击自己把自己淘汰 &amp; 第三期【和平精英PC模拟器】</div>
+        <div class="lb"><span class="chip gt">Excel：游戏攻略</span>
+          <span class="chip pred">模型：直播切片</span>
+          <span class="chip focus">侧重点：游戏攻略</span></div>
+        <div class="rsn">视频画面左上角有B站水印和UP主ID常驻，且在1:54处出现聊天框显示粉丝互动内容，主播有连续口播解说游戏过程和策略，符合直播切片的特征。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_20" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_20" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_20" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+  <div class="pair" data-a="创意剪辑" data-b="颜值COS" data-gain="2">
+    <div class="phd">
+      <div class="pname"><span class="chip gt">创意剪辑</span>
+        <span class="vs">／</span><span class="chip pred">颜值COS</span></div>
+      <div class="pgain">豁免后 +2 条 · 累计可到 94.6%</div>
+    </div>
+    <div class="smps">
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1rQHKztEsx" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 是小阿星哦 · 0:10</span>
+        <div class="t">有 GTI 的虫子混进来了 -</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：颜值COS</span>
+          <span class="chip focus">侧重点：漫展</span></div>
+        <div class="rsn">视频中真人穿着游戏角色服装（军事风格）在户外广场进行cosplay展示，并摆出战术动作，核心看点是人物造型和服装。</div>
+      </div>
+      <div class="smp">
+        <a class="vid" href="https://www.bilibili.com/video/BV1vpWzz5Eyt" target="_blank" rel="noopener">▸ 视频</a>
+        <span class="meta">三角洲行动 · 恩祈儿 · 13:06</span>
+        <div class="t">假期亏损3200w后,我选择去地球OL享受“新皮肤”... 其实本来这期该出水墨云图的 但是还是新皮肤PC上看着实在太香了 队友反应实在实在太搞笑了haha就动态征集了一下选了红皮 第三次出COS cos质量不是很高..</div>
+        <div class="lb"><span class="chip gt">Excel：创意剪辑</span>
+          <span class="chip pred">模型：颜值COS</span>
+          <span class="chip focus">侧重点：漫展</span></div>
+        <div class="rsn">视频中创作者真人出镜讲述因游戏皮肤而决定进行Cosplay的经历，并详细展示了Cosplay服装的穿戴过程和最终的造型展示，符合颜值COS的定义。</div>
+      </div></div>
+    <div class="fb">
+      <div class="fb-q">这两类在业务上可以互换吗？</div>
+      <label><input type="radio" name="p_21" value="yes"> ✅ 可以豁免（两种判法都能接受）</label>
+      <label><input type="radio" name="p_21" value="no"> ❌ 不能豁免（是两回事，模型判错了）</label>
+      <label><input type="radio" name="p_21" value="later"> ⏸ 再看看 / 需要更多样本</label>
+      <textarea class="fb-why" rows="2" placeholder="可选：为什么？（会写进报告的口径说明）"></textarea>
+    </div>
+  </div>
+
+  <footer style="color:var(--muted);font-size:12px;margin-top:40px">
+    生成脚本：<code>content_eval/build_pair_review.py</code>　·　
+    选择自动存在浏览器本地，刷新不丢；填完点右下角<b>导出 JSON</b> 给我，
+    我用 <code>apply_pair_feedback.py</code> 写回评测口径。
+  </footer>
+</div>
+
+<div class="bar">
+  <span class="prog">已判定 <b id="n">0</b> / 22</span>
+  <span class="est">按当前选择：<b id="est">372/464</b></span>
+  <button class="btn ghost" id="jump">下一个未判</button>
+  <button class="btn ghost" id="clear">清空</button>
+  <button class="btn" id="export">导出 JSON</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var KEY = 'pair_review_v1';
+var BASE_N = 372, TOTAL_N = 464;
+var store = {};
+try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { store = {}; }
+
+function toast(m) {
+  var t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(store));
+  var pairs = Array.prototype.slice.call(document.querySelectorAll('.pair'));
+  var judged = 0, gain = 0;
+  pairs.forEach(function (p) {
+    var k = p.dataset.a + '__' + p.dataset.b;
+    var v = store[k];
+    if (v && v.verdict) {
+      judged++;
+      if (v.verdict === 'yes') gain += parseInt(p.dataset.gain, 10);
+      p.classList.add('done');
+    } else {
+      p.classList.remove('done');
+    }
+  });
+  document.getElementById('n').textContent = judged;
+  var acc = (BASE_N + gain) / TOTAL_N;
+  document.getElementById('est').textContent =
+    (BASE_N + gain) + '/' + TOTAL_N + ' = ' + (acc * 100).toFixed(2) + '%';
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.pair'), function (p) {
+  var k = p.dataset.a + '__' + p.dataset.b;
+  var cur = store[k] || {};
+  Array.prototype.forEach.call(p.querySelectorAll('input[type=radio]'), function (r) {
+    if (cur.verdict === r.value) r.checked = true;
+    r.addEventListener('change', function () {
+      var prev = store[k] || {};
+      prev.verdict = r.value;
+      prev.a = p.dataset.a; prev.b = p.dataset.b;
+      prev.gain = parseInt(p.dataset.gain, 10);
+      store[k] = prev;
+      save();
+    });
+  });
+  var why = p.querySelector('.fb-why');
+  why.value = cur.why || '';
+  why.addEventListener('input', function () {
+    var prev = store[k] || {}; prev.why = why.value; store[k] = prev; save();
+  });
+});
+
+document.getElementById('jump').addEventListener('click', function () {
+  var next = Array.prototype.slice.call(document.querySelectorAll('.pair'))
+    .filter(function (p) {
+      var v = store[p.dataset.a + '__' + p.dataset.b];
+      return !(v && v.verdict);
+    })[0];
+  if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  else toast('全部判完了');
+});
+
+document.getElementById('clear').addEventListener('click', function () {
+  if (!confirm('确定清空？')) return;
+  store = {}; localStorage.removeItem(KEY); location.reload();
+});
+
+document.getElementById('export').addEventListener('click', function () {
+  var accept = [], reject = [], later = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.pair'), function (p) {
+    var k = p.dataset.a + '__' + p.dataset.b;
+    var v = store[k];
+    if (!v || !v.verdict) return;
+    var rec = { a: p.dataset.a, b: p.dataset.b,
+                gain: parseInt(p.dataset.gain, 10), why: v.why || '' };
+    if (v.verdict === 'yes') accept.push(rec);
+    else if (v.verdict === 'no') reject.push(rec);
+    else later.push(rec);
+  });
+  var gain = accept.reduce(function (s, r) { return s + r.gain; }, 0);
+  var out = {
+    generated: new Date().toISOString().slice(0, 10),
+    total_candidates: 22,
+    judged: accept.length + reject.length + later.length,
+    base: { correct: BASE_N, total: TOTAL_N },
+    estimated: { correct: BASE_N + gain, total: TOTAL_N,
+                 accuracy: +((BASE_N + gain) / TOTAL_N).toFixed(4) },
+    accept: accept, reject: reject, later: later
+  };
+  var txt = JSON.stringify(out, null, 2);
+  var blob = new Blob([txt], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pair_review.json';
+  a.click();
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function () {});
+  toast('已导出：采纳 ' + accept.length + ' / 拒绝 ' + reject.length +
+        ' / 待议 ' + later.length);
+});
+
+save();
+</script>
+</body></html>

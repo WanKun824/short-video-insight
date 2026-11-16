@@ -1,0 +1,142 @@
+  <h2>四、整体判定顺序（最重要）</h2>
+  <div class="ask">
+    看完上面的样本后，如果你能把这三类的判断写成一条<b>有先后顺序的规则</b>，
+    我可以直接写进提示词并用 dev/test 验证。例如：
+    <ul>
+      <li>「先看有没有脱离对局的设计（剧本/跨场景/非游戏素材）→ 有则创意整活」</li>
+      <li>「再看是否多段击杀快剪 + BGM → 是则高光剪辑」</li>
+      <li>「否则算游戏实况」</li>
+    </ul>
+    <textarea id="rule" rows="6" style="width:100%;margin-top:10px;font:inherit;font-size:13px;
+      padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);
+      color:var(--ink);resize:vertical" placeholder="在这里写你的判定顺序……"></textarea>
+  </div>
+
+  <footer>
+    生成脚本：<code>content_eval/build_boundary_compare.py</code>　·　
+    填写内容自动存在浏览器本地，刷新不会丢；填完点右下角<b>导出 JSON</b> 给我即可。
+  </footer>
+</div>
+
+<div class="bar">
+  <span class="prog">已判断 <b id="n">0</b> / __MIXED__</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <button class="btn ghost" id="jump">跳到下一条未填</button>
+  <button class="btn ghost" id="clear">清空</button>
+  <button class="btn" id="export">导出 JSON</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// 这是离线 HTML，没有后端：填写内容存在 localStorage，刷新/关页面不丢。
+// 填完点「导出 JSON」，产出的文件可被 apply_boundary_feedback.py 直接读回流水线。
+var KEY = 'boundary_feedback_v1';
+var store = {};
+try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { store = {}; }
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(store));
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.fb'));
+  var n = boxes.filter(function (b) {
+    var v = store[b.dataset.id];
+    return v && v.verdict;
+  }).length;
+  document.getElementById('n').textContent = n;
+  document.getElementById('fill').style.width = (n / boxes.length * 100) + '%';
+}
+
+function bind(box) {
+  var id = box.dataset.id;
+  var cur = store[id] || {};
+  var radios = box.querySelectorAll('input[type=radio]');
+  Array.prototype.forEach.call(radios, function (r) {
+    if (cur.verdict === r.value) r.checked = true;
+    r.addEventListener('change', function () {
+      var prev = store[id] || {};
+      prev.verdict = r.value;
+      prev.gt = box.dataset.gt;
+      prev.pred = box.dataset.pred;
+      store[id] = prev;
+      box.classList.toggle('show-other', r.value === 'neither');
+      box.closest('.card').classList.add('done');
+      save();
+    });
+  });
+  var other = box.querySelector('.fb-other');
+  var why = box.querySelector('.fb-why');
+  other.value = cur.should_be || '';
+  why.value = cur.why || '';
+  if (cur.verdict === 'neither') box.classList.add('show-other');
+  if (cur.verdict) box.closest('.card').classList.add('done');
+  other.addEventListener('input', function () {
+    var p = store[id] || {}; p.should_be = other.value; store[id] = p; save();
+  });
+  why.addEventListener('input', function () {
+    var p = store[id] || {}; p.why = why.value; store[id] = p; save();
+  });
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.fb'), bind);
+
+var ruleBox = document.getElementById('rule');
+ruleBox.value = store.__rule__ || '';
+ruleBox.addEventListener('input', function () {
+  store.__rule__ = ruleBox.value;
+  save();
+});
+
+document.getElementById('jump').addEventListener('click', function () {
+  var next = Array.prototype.slice.call(document.querySelectorAll('.fb'))
+    .filter(function (b) { var v = store[b.dataset.id]; return !(v && v.verdict); })[0];
+  if (next) next.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  else toast('全部填完了');
+});
+
+document.getElementById('clear').addEventListener('click', function () {
+  if (!confirm('确定清空所有已填内容？')) return;
+  store = {};
+  localStorage.removeItem(KEY);
+  location.reload();
+});
+
+document.getElementById('export').addEventListener('click', function () {
+  var items = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.fb'), function (b) {
+    var v = store[b.dataset.id];
+    if (!v || !v.verdict) return;
+    items.push({
+      id: b.dataset.id,
+      excel_label: b.dataset.gt,
+      model_label: b.dataset.pred,
+      verdict: v.verdict,
+      should_be: v.should_be || '',
+      why: v.why || ''
+    });
+  });
+  var out = {
+    generated: new Date().toISOString().slice(0, 10),
+    total: __MIXED__,
+    judged: items.length,
+    decision_rule: store.__rule__ || '',
+    items: items
+  };
+  var txt = JSON.stringify(out, null, 2);
+  var blob = new Blob([txt], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'boundary_feedback.json';
+  a.click();
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function () {});
+  toast('已导出 ' + items.length + ' 条（也已复制到剪贴板）');
+});
+
+save();
+</script>
+</body></html>
