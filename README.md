@@ -5,10 +5,12 @@
 > 下载完成后可直接调用多模态大模型输出结构化内容标签（CSV / Excel）。
 >
 > 另含一套完整的**内容分类与评测流水线**：24 类标签、业务口径评测、
-> dev/test 多种子验证，覆盖 4 平台 10 款游戏。见 [内容分类与评测](#内容分类与评测)。
+> dev/test 多种子验证。见 [内容分类与评测](#内容分类与评测)。
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+
+**核心文档**　[实验日志](docs/experiment-log.md)（79% → 94.6% 的完整过程，含 6 个失败尝试）· [分类技术说明](docs/classification-pipeline.md) · [下载机制](docs/download-mechanics.md) · [分析机制](docs/analysis-mechanics.md)
 
 ---
 
@@ -17,6 +19,8 @@
 - [它能做什么](#它能做什么)
 - [特性](#特性)
 - [快速开始](#快速开始)
+  - [链 A：下载 + 内容分析](#链-a下载--内容分析)
+  - [链 B：内容分类评测](#链-b内容分类评测)
 - [安装](#安装)
 - [配置](#配置)
 - [使用](#使用)
@@ -24,7 +28,7 @@
   - [2. AI 内容分析](#2-ai-内容分析)
   - [3. 单平台直接调用](#3-单平台直接调用)
 - [**内容分类与评测**](#内容分类与评测)
-  - [两条命令跑完](#两条命令跑完)
+  - [从零跑一遍](#从零跑一遍)
   - [24 类标签](#24-类标签)
   - [业务口径评测](#业务口径评测)
   - [当前结果](#当前结果)
@@ -41,12 +45,19 @@
 
 ## 它能做什么
 
-把一份"作品链接清单"丢进去，拿到两样东西：
+把一份"作品链接清单"丢进去，拿到视频文件和内容标签。仓库里有**两条可独立使用的链路**：
 
-1. **视频文件** —— 按平台分目录落盘，支持断点续传、并发下载、多档清晰度选择；
-2. **内容分析表** —— 每条视频一份 CSV，外加一份带格式的汇总 Excel，包含六个维度的结构化标签与模型的完整推理过程。
+| | 链 A：内容分析 | 链 B：内容分类评测 |
+|---|---|---|
+| 入口 | `scripts/analyze_videos.py` | `classification/classify.py` |
+| 标签体系 | 六个维度的**开放式**标签（题材/形式/情绪…） | **固定 24 类**内容类型 |
+| 擅长 | 快速摸清一批新内容长什么样 | 在既定口径下做到可控、可复现、可上生产 |
+| 有无评测 | 无 | 有评测集、业务口径、防过拟合流程、逐条错误分析 |
+| 适用 | 内容选题调研、竞品拆解 | 内容分发打标、素材库分类、模型能力评估 |
 
-典型用途：内容选题调研、竞品内容结构拆解、爆款要素统计、素材库归档。
+两条链路共用同一套下载器。
+
+**链 A：内容分析**
 
 ```
 作品链接清单.md
@@ -58,6 +69,26 @@
                                  result/douyin_result/_汇总_douyin.csv
                                  result/douyin_result/_汇总_douyin.xlsx
 ```
+
+**链 B：内容分类评测**
+
+```
+Excel（人工标注作为真值）
+      │
+      ├── prepare_data_v4.py ──► ground_truth.jsonl（分层抽样）
+      ├── download_multi.py  ──► videos_v4/*.mp4
+      │
+      ├── text_prior.py ──────► 文本模型 Top-3 候选
+      ├── classify.py ────────► predictions.jsonl（多模态 + 检索增强）
+      │
+      ├── route_v3.py ────────► 按工作表分治（dev 选择 / test 验证）
+      ├── postprocess_v3.py ──► 话题 + 作者规则层
+      │
+      └── build_v*_report.py ─► 评测报告（MD + HTML，含逐条错误分析）
+```
+
+典型用途：内容选题调研、竞品内容结构拆解、爆款要素统计、素材库归档、
+内容分发打标、分类模型能力评估。
 
 ---
 
@@ -98,21 +129,39 @@ git clone https://github.com/WanKun824/short-video-insight.git
 cd short-video-insight
 pip install -r requirements.txt
 
-# 2. 准备链接清单（一行一个链接，支持分享文案直接粘贴）
-#    文件名可自定义，用 --urls 指定
+# 2. 配置模型 Key
+cp config.example.json batch_config.json
+# 编辑 batch_config.json 填入 Key，或直接用环境变量
+```
+
+### 链 A：下载 + 内容分析
+
+```bash
+# 准备链接清单（一行一个链接，支持分享文案直接粘贴）
 cat > 作品链接清单.md <<'EOF'
 https://www.douyin.com/video/7xxxxxxxxxxxxxxxxxx
 https://v.kuaishou.com/xxxxxx
 EOF
 
-# 3. 下载（默认最低清晰度，总并发 20）
 python scripts/download_videos.py --urls 作品链接清单.md -o downloads
-
-# 4. 配置模型 Key 后分析
-cp config.example.json batch_config.json
-# 编辑 batch_config.json 填入 Key，或直接用环境变量
 python scripts/analyze_videos.py --dir downloads/douyin --config batch_config.json
 ```
+
+### 链 B：内容分类评测
+
+```bash
+cd classification
+
+# 从已有的预测复现评测报告（不调模型，不需要视频）
+python build_v4_report.py --preds out/v4_final_predictions.jsonl
+python build_v4_compare.py
+# 预期：准确率 439/464 = 94.61%
+
+# 从零跑一遍：读 Excel → 下载 → 分类（见 classification/README.md）
+```
+
+> 链 B 的仓库里带了**精简后的预测结果**，所以不下载视频也能把评测报告跑出来。
+> 要重新分类则需要先下载视频（体积原因未入库）。
 
 ---
 
@@ -272,7 +321,8 @@ DouyinShareDownload(
 ## 内容分类与评测
 
 `classification/` 是一套完整的内容分类流水线：把短视频打上 **24 类内容类型**标签，
-并与人工标注比对评测。覆盖 4 个平台、10 款游戏、4600+ 条样本。
+并与人工标注比对评测。覆盖 **4 个平台**（抖音 / 快手 / B站 / 小红书）、
+**9 款游戏**、**2500+ 条样本**（其中 910 条进了评测集）。
 
 它和上面的「AI 内容分析」（六个维度的开放式标签）定位不同：
 分类流水线要解决的是**在固定标签体系下，做到可控、可复现、可上生产的准确率**，
@@ -280,7 +330,7 @@ DouyinShareDownload(
 
 完整技术说明见 **[docs/classification-pipeline.md](docs/classification-pipeline.md)**。
 
-### 两条命令跑完
+### 从零跑一遍
 
 ```bash
 cd classification
@@ -298,6 +348,13 @@ python classify.py --prompt-version bili_v11 \
 
 # 2. 出报告
 python build_v4_report.py --preds out/v4_bili/predictions.jsonl
+python build_v4_compare.py
+```
+
+不想下载视频时，可以直接用仓库里带的精简预测复现报告：
+
+```bash
+python build_v4_report.py --preds out/v4_final_predictions.jsonl   # 94.61%
 python build_v4_compare.py
 ```
 
@@ -339,7 +396,7 @@ python build_v4_compare.py
 
 | 数据集 | 严格 | 业务口径（31 组） | 交付（含人工复核） |
 |---|---:|---:|---:|
-| v3 抖音/快手（446 条） | 59.6% | **90.36%** | **95.07%** |
+| v3 抖音/快手（446 条） | 64.6% | **90.36%** | **95.07%** |
 | v4 B站（464 条） | 59.7% | **94.61%** | **95.04%** |
 
 > **这两个数字用途不同。** 「业务口径」是模型 + 泛化规则的真实水平，可外推到新数据；
